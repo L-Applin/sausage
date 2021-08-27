@@ -1,0 +1,23 @@
+###
+POST {{host}}/review
+Content-Type: application/json
+
+{
+  "authorId": "52290734-214b-44ed-8b5b-21b967a3de0d",
+  "crims": [ "jean", "<uk 2>" ],
+  "date": "2021-10-05T00:21:00+00:00",
+  "stars": 5,
+  "text": "AGAIN???? Come one, choose someone else!!!"
+}
+
+
+###
+GET {{host}}/review?page=0&size=10&dir=asc
+
+
+###
+GET {{host}}/review/alice
+
+
+###
+GET {{host}}/criminal/review/bob

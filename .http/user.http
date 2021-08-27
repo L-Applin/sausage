@@ -1,0 +1,12 @@
+POST {{host}}/user
+Content-Type: application/json
+
+{
+  "username":  "nancy",
+  "saltedPwd": "b21e2b997f5867742fd6395aa0147911c9f2c5f2ecd92ec0a2fc573b1a3cae92",
+  "salt":      "1234567812345678123456781234567812345678123456781234567812345678"
+}
+
+
+###
+GET {{host}}/user/charles
