@@ -1,16 +1,17 @@
 create schema if not exists sausage;
 use sausage;
 
-create table if not exists user (
+create table if not exists app_user (
     user_id     varchar(255) not null unique default (uuid()),
     username    varchar(255) not null unique ,
     password    varchar(64) not null ,
     salt        varchar(64) not null
 ) engine=InnoDB;
 
-alter table user add primary key user(user_id);
+alter table app_user add primary key app_user(user_id);
+alter table app_user add foreign key app_user_users_fk(username) references users(username);
 
-create unique index person_username_idx using hash on user(username);
+create unique index person_username_idx using hash on app_user(username);
 
 
 create table if not exists review (
@@ -20,7 +21,7 @@ create table if not exists review (
     stars       smallint,
     text        varchar(512),
 
-    constraint foreign key review_author_id_fk(author_id) references user(user_id) on delete cascade
+    constraint foreign key review_author_id_fk(author_id) references app_user(user_id) on delete cascade
 ) engine=InnoDB;
 
 alter table review add primary key review(review_id);
@@ -35,7 +36,7 @@ create table if not exists crims_involved (
 
     constraint primary key (review_id, user_id),
     constraint foreign key crims_review_fk(review_id) references review(review_id),
-    constraint foreign key crims_user_fk(user_id) references user(user_id)
+    constraint foreign key crims_user_fk(user_id) references app_user(user_id)
 ) engine=InnoDB;
 
 

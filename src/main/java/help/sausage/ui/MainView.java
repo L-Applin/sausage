@@ -1,13 +1,12 @@
 package help.sausage.ui;
 
-import static help.sausage.ui.component.ReviewComponent.default_review;
-
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.VaadinSession;
 import help.sausage.client.ReviewClient;
 import help.sausage.dto.ReviewDto;
 import help.sausage.ui.component.ReviewComponent;
@@ -19,11 +18,20 @@ import org.springframework.http.ResponseEntity;
 
 @Route
 public class MainView extends VerticalLayout {
+    private static final long serialVersionUID = 42L;
+
+    public static final String LOGGED_USERNAME_ATTRIBUTE_KEY = "username";
 
     private final ReviewClient reviewClient;
 
     public MainView(@Autowired ReviewClient reviewClient) {
         this.reviewClient = reviewClient;
+
+        VaadinSession session = VaadinSession.getCurrent();
+        Object user = session.getAttribute(LOGGED_USERNAME_ATTRIBUTE_KEY);
+        if (user == null) {
+            Notification.show("No user logged in");
+        }
 
         VerticalLayout centerColumn = new VerticalLayout();
         centerColumn.setWidth("640px");

@@ -1,11 +1,9 @@
 package help.sausage.entity;
 
-import java.math.BigInteger;
 import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -15,7 +13,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
 @Entity
-@Table(name = "user", schema = "sausage")
+@Table(name = "app_user", schema = "sausage")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
