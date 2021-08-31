@@ -1,5 +1,5 @@
 ###
-POST {{host}}/review
+POST {{host}}/v1/review
 Content-Type: application/json
 
 {
@@ -12,12 +12,16 @@ Content-Type: application/json
 
 
 ###
-GET {{host}}/review?page=0&size=10&dir=asc
+GET {{host}}/v1/review
 
 
 ###
-GET {{host}}/review/alice
+GET {{host}}/v1/review?page=0&size=10
 
 
 ###
-GET {{host}}/criminal/review/bob
+GET {{host}}/v1/review/alice
+
+
+###
+GET {{host}}/v1/criminal/review/bob

@@ -1,5 +1,6 @@
 package help.sausage.entity;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -49,7 +50,7 @@ public class ReviewEntity {
     private List<UnknownCrimEntity> unknownCrims;
 
     @Column
-    private Date date;
+    private LocalDate date;
 
     @Column
     private int stars;

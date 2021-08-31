@@ -36,7 +36,14 @@ public class ReviewService {
         reviewDto.getCrims().forEach(username ->
                 userRepository.findByUsername(username).ifPresentOrElse(knownCrims::add, () -> unkownCrims.add(username)));
         UserEntity author = userRepository.findById(reviewDto.getAuthorId()).orElseThrow(); // @Error - better reporting
-        ReviewEntity toSave = new ReviewEntity(null, author , knownCrims, Collections.emptyList(), reviewDto.getDate(), reviewDto.getStars(), reviewDto.getText());
+        ReviewEntity toSave = new ReviewEntity(
+                null,
+                author ,
+                knownCrims,
+                Collections.emptyList(),
+                reviewDto.getDate(),
+                reviewDto.getStars(),
+                reviewDto.getText());
         ReviewEntity saved = reviewRepository.save(toSave);
         unkownCrims.forEach(str -> unkownCrimsRepository.save(
                 UnknownCrimEntity.newUnknownCrim(str, saved.getReviewId())));

@@ -2,6 +2,7 @@ package help.sausage.dto;
 
 import help.sausage.entity.UserEntity;
 import help.sausage.validation.ValidNewReview;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -18,7 +19,7 @@ public class NewReviewDto {
 
     private UUID authorId;
     private List<String> crims;
-    private Date date;
+    private LocalDate date;
     private int stars;
     private String text;
 

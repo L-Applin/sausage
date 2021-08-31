@@ -1,5 +1,6 @@
 package help.sausage.dto;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -21,7 +22,7 @@ public class ReviewDto {
     @NotNull
     private List<String> unknownCrims;
     @NotNull
-    private Date date;
+    private LocalDate date;
     @NotNull
     private int stars;
     @NotNull
