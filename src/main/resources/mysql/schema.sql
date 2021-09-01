@@ -3,30 +3,31 @@ use sausage;
 
 create table if not exists app_user (
     user_id     varchar(255) not null unique default (uuid()),
-    username    varchar(255) not null unique ,
-    password    varchar(64) not null ,
-    salt        varchar(64) not null
+    username    varchar(255) not null unique,
+    icon        varchar(255) not null default 'cat'
+
 ) engine=InnoDB;
 
 alter table app_user add primary key app_user(user_id);
-alter table app_user add foreign key app_user_users_fk(username) references users(username);
+alter table app_user add foreign key app_user_users_fk(username) references users(username) on delete cascade ;
 
 create unique index person_username_idx using hash on app_user(username);
 
 
 create table if not exists review (
-    review_id   varchar(255) not null unique default (uuid()),
-    author_id   varchar(255) not null ,
-    date        DATE,
-    stars       smallint,
-    text        varchar(512),
+    review_id       varchar(255) not null unique default (uuid()),
+    author_id       varchar(255) not null ,
+    date_created    timestamp not null default now(),
+    date_review     timestamp,
+    stars           smallint not null default 0,
+    text            varchar(512) not null default '',
 
     constraint foreign key review_author_id_fk(author_id) references app_user(user_id) on delete cascade
 ) engine=InnoDB;
 
 alter table review add primary key review(review_id);
 
-create index review_date_idx using hash on review(date);
+create index review_date_idx using hash on review(date_created);
 create index review_auther_idx using hash on review(author_id);
 
 

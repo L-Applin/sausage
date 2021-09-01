@@ -2,10 +2,15 @@ package help.sausage.ui.component;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.component.HasStyle;
 import com.vaadin.flow.component.HtmlComponent;
 import com.vaadin.flow.component.HtmlContainer;
+import com.vaadin.flow.component.Tag;
+import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.Anchor;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
@@ -19,46 +24,53 @@ import com.vaadin.flow.router.RouterLink;
 import help.sausage.dto.ReviewDto;
 import help.sausage.ui.CrimView;
 import help.sausage.ui.data.Review;
+import help.sausage.ui.data.Review.Author;
 import help.sausage.ui.data.Review.Crim;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
-public class ReviewComponent extends VerticalLayout {
+/*
+style="box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); border-radius: 1em; background-color: #f0ebeb;
+ */
+@Tag("review-card")
+@CssImport("./styles/review-card.css")
+public class ReviewCardComponent extends VerticalLayout {
 
-    public static Review default_review = new Review(
-            "alice",
-            List.of(new Crim("McQueen", true), new Crim("Jafar", true), new Crim("<This dude I dont remember his name>", false), new Crim("Lightning", true)),
+    public static final Review default_review = new Review(
+            new Author("alice", "cat"),
+            List.of(new Crim("McQueen", true), new Crim("Jafar", true), new Crim("Unknown", false), new Crim("Lightning", true)),
+            LocalDate.of(2021, 8, 3),
             LocalDate.of(2021, 8, 3),
             4,
             """
                 Best experience ever <3 ! They did not rob me, and even took the time to put my illegal stuff in a trash can, so that I could get them back later. Would recommend!!!
                 
-                https://i.imgur.com/pvxVF7R.jpeg"
+                https://i.imgur.com/pvxVF7R.jpeg
                 """);
 
-    public ReviewComponent(Review review) {
-        setWidth("100%");
-        getStyle().set("border-top", "1px solid gray");
-        getStyle().set("padding-top", "32px");
+    public ReviewCardComponent(Review review) {
 
-        H2 author = new H2(review.authorName());
-        author.getStyle().set("margin", "0px");
-        author.getStyle().set("padding-left", "16px");
-        Span date = new Span(review.date().toString());
-        date.getStyle().set("opacity", "0.6");
+        H2 author = new H2(review.author().name());
+        author.setClassName("review-card-author");
+
+        final String iconName = review.author().icon();
+        Image authorIcon = new Image("images/user-icons/%s.png".formatted(iconName),
+                "user icon: %s".formatted(iconName));
+        authorIcon.setClassName("review-card-user-icon");
+
+        Span date = new Span(review.dateReview().toString());
+        date.setClassName("review-card-date");
 
         Label descr = new Label(review.text());
-        descr.getStyle().set("word-wrap", "break-word");
-        descr.getStyle().set("margin", "0px");
-        List<Component> crims = review.crims().stream()
-                .map(this::createLinkOrTextFromCrim)
-                .toList();
+        Div descrContainer = new Div();
+        descrContainer.add(descr);
+        descrContainer.setClassName("review-card-text");
 
         HorizontalLayout starHolder = new HorizontalLayout();
-        starHolder.setMargin(false);
-        starHolder.getStyle().set("margin", "0px");
+        starHolder.setClassName("review-card-star-holder");
+
         int totalStars = review.stars();
         for (int i = 1; i <= 5; i++) {
             Icon icon;
@@ -67,21 +79,26 @@ public class ReviewComponent extends VerticalLayout {
             } else {
                 icon = VaadinIcon.STAR_O.create();
             }
-            icon.setSize("1em");
-            icon.getStyle().set("margin", "4px");
+            icon.setClassName("review-card-star-icon");
             starHolder.add(icon);
         }
 
-        HorizontalLayout top = new HorizontalLayout(author, date);
-        top.getStyle().set("margin-top", "0px");
-        top.setVerticalComponentAlignment(Alignment.END, author, date);
+        List<Component> crims = review.crims().stream()
+                .map(this::createLinkOrTextFromCrim)
+                .toList();
         FlexLayout crimsHolder = new FlexLayout();
         crimsHolder.setFlexWrap(FlexWrap.WRAP);
         crims.forEach(crimsHolder::add);
+        crimsHolder.setClassName("review-card-crim-list");
 
-        add(top);
-        add(starHolder);
-        add(descr);
+        HorizontalLayout authorTop = new HorizontalLayout(authorIcon, author);
+        authorTop.setDefaultVerticalComponentAlignment(Alignment.CENTER);
+        HorizontalLayout sub = new HorizontalLayout(starHolder, date);
+        sub.setDefaultVerticalComponentAlignment(Alignment.CENTER);
+
+        add(authorTop);
+        add(sub);
+        add(descrContainer);
         add(crimsHolder);
     }
 
@@ -90,7 +107,7 @@ public class ReviewComponent extends VerticalLayout {
         Component c = crim.isKnown()
             ? new RouterLink(crimName, CrimView.class, new RouteParameters("crimName", crimName))
             : new Span(crimName);
-        c.getElement().getStyle().set("margin-right", "1em");
+        ((HasStyle) c).setClassName("review-card-crim-name");
         return c;
     }
 }

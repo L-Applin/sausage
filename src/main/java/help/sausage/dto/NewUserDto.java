@@ -4,11 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class NewUserDto {
-    private String username;
-    private String saltedPwd;
-    private String salt;
+public record NewUserDto(
+    String username,
+    String encodedPwd,
+    String icon
+){
+
+    public NewUserDto() {
+        this(null, null, null);
+    }
 }

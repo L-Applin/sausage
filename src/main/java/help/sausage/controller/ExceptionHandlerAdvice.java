@@ -1,20 +1,16 @@
 package help.sausage.controller;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import help.sausage.dto.ErrorDto;
+import java.util.NoSuchElementException;
+import javax.servlet.http.HttpServletRequest;
 import org.springframework.context.MessageSourceResolvable;
-import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
@@ -28,24 +24,22 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
         String msg = "Validation failed for argument ["
                 + ex.getParameter().getParameterIndex() + "] in "
                 + ex.getParameter().getExecutable().toGenericString();
-        ErrorModel model = new ErrorModel(msg, request.getContextPath());
-        model.meta.put("target", ex.getTarget());
-        model.meta.put("violations", ex.getAllErrors().stream().map(MessageSourceResolvable::getDefaultMessage).toList());
+        ErrorDto model = new ErrorDto(msg, request.getContextPath());
+        model.getMeta().put("target", ex.getTarget());
+        model.getMeta().put("violations", ex.getAllErrors().stream().map(MessageSourceResolvable::getDefaultMessage).toList());
         return ResponseEntity.status(status).body(model);
     }
 
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    private static class ErrorModel {
-        private String msg;
-        private String path;
-        private Date timestamp = new Date();
-        private Map<String, Object> meta = new HashMap<>();
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public ResponseEntity<ErrorDto> handleUsernameNotFound(HttpServletRequest req, UsernameNotFoundException ex) {
+        return new ResponseEntity<>(new ErrorDto(ex.getMessage(), req.getContextPath()), HttpStatus.UNAUTHORIZED);
 
-        public ErrorModel(String msg, String path) {
-            this.msg = msg;
-            this.path = path;
-        }
     }
+
+    @ExceptionHandler(NoSuchElementException.class)
+    public ResponseEntity<ErrorDto> handleNoSuchElement(HttpServletRequest req, UsernameNotFoundException ex) {
+        ErrorDto errorDto = new ErrorDto(ex.getMessage(), req.getContextPath());
+        return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
+    }
+
 }

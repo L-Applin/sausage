@@ -1,9 +1,8 @@
 package help.sausage.validation;
 
 import help.sausage.dto.NewReviewDto;
-import help.sausage.entity.UserEntity;
-import help.sausage.exceptions.InvalidNewReviewException;
-import help.sausage.repository.UserRepository;
+import help.sausage.entity.AppUserEntity;
+import help.sausage.repository.AppUserRepository;
 import help.sausage.validation.ValidNewReview.NewRewviewValidator;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -31,7 +30,7 @@ public @interface ValidNewReview {
     class NewRewviewValidator implements ConstraintValidator<ValidNewReview, NewReviewDto> {
 
         @Autowired
-        private UserRepository userRepository;
+        private AppUserRepository appUserRepository;
 
         @Override
         public boolean isValid(NewReviewDto review, ConstraintValidatorContext ctx) {
@@ -45,7 +44,7 @@ public @interface ValidNewReview {
                 isValid.set(false);
             }
 
-            Optional<UserEntity> authorOpt = userRepository.findById(review.getAuthorId());
+            Optional<AppUserEntity> authorOpt = appUserRepository.findById(review.getAuthorId());
             authorOpt.ifPresentOrElse(author -> validateAuthor(review, author, ctx, isValid),
                     () -> ctx.buildConstraintViolationWithTemplate(
                             "Cannot find author with id '%s'".formatted(review.getAuthorId()))
@@ -53,7 +52,7 @@ public @interface ValidNewReview {
             return isValid.get();
         }
 
-        private void validateAuthor(NewReviewDto review, UserEntity author, ConstraintValidatorContext ctx, AtomicBoolean isValid) {
+        private void validateAuthor(NewReviewDto review, AppUserEntity author, ConstraintValidatorContext ctx, AtomicBoolean isValid) {
             for (String crimName : review.getCrims()) {
                 if (crimName == null || "".equals(crimName)) {
                     ctx.buildConstraintViolationWithTemplate("Empty crim value not allowed")

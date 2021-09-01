@@ -1,7 +1,6 @@
 package help.sausage.entity;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import javax.persistence.Column;
@@ -36,7 +35,7 @@ public class ReviewEntity {
 
     @ManyToOne
     @JoinColumn(name = "author_id")
-    private UserEntity authorId;
+    private AppUserEntity author;
 
     @ManyToMany
     @JoinTable(
@@ -44,13 +43,16 @@ public class ReviewEntity {
             joinColumns = @JoinColumn(name = "review_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
-    private List<UserEntity> crims;
+    private List<AppUserEntity> crims;
 
     @OneToMany(mappedBy = "review")
     private List<UnknownCrimEntity> unknownCrims;
 
-    @Column
-    private LocalDate date;
+    @Column(name = "date_created")
+    private LocalDate dateCreated;
+
+    @Column(name = "date_review")
+    private LocalDate reviewDate;
 
     @Column
     private int stars;

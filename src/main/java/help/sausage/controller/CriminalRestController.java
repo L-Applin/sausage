@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/v1/criminal")
+@RequestMapping("/api/criminal")
 @RequiredArgsConstructor
 public class CriminalRestController {
 

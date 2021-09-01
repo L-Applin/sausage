@@ -1,16 +1,15 @@
-POST {{host}}/v1/user
+POST {{host}}/api/user
 Content-Type: application/json
 
 {
-  "username":  "Applin",
-  "saltedPwd": "qwertyui",
-  "salt":      ""
+  "username":  "~test~",
+  "encodedPwd": "12345678"
 }
 
 
 ###
-GET {{host}}/v1/user/charles
+GET {{host}}/api/user/charles
 
 
 ###
-POST {{host}}/v1/login
+POST {{host}}/api/login

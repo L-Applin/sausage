@@ -3,12 +3,15 @@ package help.sausage.client;
 import help.sausage.controller.ReviewController;
 import help.sausage.dto.NewReviewDto;
 import help.sausage.dto.ReviewDto;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -46,15 +49,18 @@ public class ReviewClient implements ReviewController {
                 HttpMethod.GET,
                 HttpEntity.EMPTY,
                 REVIEW_LIST_RESPONSE_TYPE);
-
     }
 
     public ResponseEntity<List<ReviewDto>> getAllReviewsPaginated() {
         final String url = host + BASE_URL;
+        HttpHeaders httpHeaders = new HttpHeaders();
+        List<String> appJson = new ArrayList<>();
+        appJson.add(MediaType.APPLICATION_JSON_VALUE);
+        httpHeaders.put(HttpHeaders.CONTENT_TYPE, appJson);
         return frontEndClient.exchange(
                 url,
                 HttpMethod.GET,
-                HttpEntity.EMPTY,
+                new HttpEntity<>(httpHeaders),
                 REVIEW_LIST_RESPONSE_TYPE);
     }
 

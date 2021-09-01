@@ -5,6 +5,7 @@ import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.Unit;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.datepicker.DatePicker;
+import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.FlexLayout.FlexWrap;
@@ -12,6 +13,8 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.theme.Theme;
+import com.vaadin.flow.theme.lumo.Lumo;
 import help.sausage.dto.NewReviewDto;
 import help.sausage.dto.ReviewDto;
 import help.sausage.ui.data.Review;
@@ -19,9 +22,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
+@CssImport(value="./styles/review-text-field.css", themeFor="vaadin-text-area")
 public class ReviewFormComponent extends VerticalLayout {
-
-
 
     public ReviewFormComponent() {
         // Create UI components
@@ -31,6 +33,7 @@ public class ReviewFormComponent extends VerticalLayout {
         reviewArea.setWidth("100%");
         reviewArea.setHeight("8em");
         reviewArea.getStyle().set("margin", "0px");
+        reviewArea.getStyle().set("border-radius", "0px");
         DatePicker datePicker = new DatePicker(LocalDate.now());
         datePicker.setWidth(9, Unit.EM);
         TextField crimsField = new TextField(null, "Who kidnapped you?");

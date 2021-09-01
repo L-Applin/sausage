@@ -11,12 +11,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 public interface ReviewController {
 
-    String BASE_URL = "/v1/review";
+    String BASE_URL = "/api/review";
 
-    ResponseEntity<ReviewDto> createNewReview(@RequestBody @Valid NewReviewDto reviewDto);
+    ResponseEntity<ReviewDto> createNewReview(NewReviewDto reviewDto);
 
     ResponseEntity<List<ReviewDto>> getAllReviewsPaginated(int page, int size, String sortBy, String dir);
 
     String GET_REVIEW_BY_USERNAME_URL = "/{username}";
-    ResponseEntity<List<ReviewDto>> getReviewByUsername(@PathVariable String username);
+    ResponseEntity<List<ReviewDto>> getReviewByUsername(String username);
 }

@@ -1,5 +1,7 @@
 package help.sausage.security;
 
+import static org.springframework.http.HttpMethod.POST;
+
 import javax.annotation.Resource;
 import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 
 @EnableWebSecurity
 @Configuration
@@ -33,10 +37,10 @@ public class SecurityConfigLocal extends WebSecurityConfigurerAdapter {
     private DataSource dataSource;
 
     @Override
-    public void configure(WebSecurity web) throws Exception {
+    public void configure(WebSecurity web) {
         web.ignoring()
-                .mvcMatchers(HttpMethod.POST, "/v1/user")
                 .antMatchers(
+    "/api/**",
                 "/account",
                 "/VAADIN/**",
                 "/favicon.ico",
@@ -50,31 +54,26 @@ public class SecurityConfigLocal extends WebSecurityConfigurerAdapter {
                 "/h2-console/**");
     }
 
-
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 //        http.authorizeRequests().anyRequest().permitAll().and().csrf().disable();
-        http.csrf().disable()
-            .requestCache().requestCache(new CustomRequestCache())
-            .and().authorizeRequests()
+        http
+        .csrf().disable()
+        .requestCache().requestCache(new CustomRequestCache())
+        .and()
+            .authorizeRequests()
             .requestMatchers(SecurityUtils::isFrameworkInternalRequest).permitAll()
-            .antMatchers("**/account", "**/v1/user").permitAll()
             .anyRequest().authenticated()
-            .and().formLogin()
+            .antMatchers("/api/**").permitAll() // todo
+        .and()
+            .formLogin()
             .loginPage(LOGIN_URL).permitAll()
             .loginProcessingUrl(LOGIN_PROCESSING_URL)
             .failureUrl(LOGIN_FAILURE_URL)
-            .and().logout().logoutSuccessUrl(LOGOUT_SUCCESS_URL);
+        .and()
+            .logout().logoutSuccessUrl(LOGOUT_SUCCESS_URL);
     }
 
-
-//    @Bean
-//    public DaoAuthenticationProvider authProvider() {
-//        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-//        authProvider.setUserDetailsService(sausagesUserDetailsManager);
-//        authProvider.setPasswordEncoder(passwordEncoder());
-//        return authProvider;
-//    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {

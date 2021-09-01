@@ -1,12 +1,9 @@
 package help.sausage.dto;
 
-import help.sausage.entity.UserEntity;
 import help.sausage.validation.ValidNewReview;
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
-import javax.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

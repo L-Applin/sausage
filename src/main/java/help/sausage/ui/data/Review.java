@@ -10,26 +10,29 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 public record Review (
-    String authorName,
+    Author author,
     List<Crim> crims,
-    LocalDate date,
+    LocalDate dateCreated,
+    LocalDate dateReview,
     int stars,
     String text) {
 
     public static Review fromDto(ReviewDto review) {
         return new Review(
-            review.getAuthor(),
+            new Author(review.getAuthor().getName(), review.getAuthor().getIcon()),
             Stream.concat(
                 review.getKnownCrims().stream().map(c -> new Crim(c, true)),
                 review.getUnknownCrims().stream().map(c -> new Crim(c, false)))
                     .toList(),
-            review.getDate(),
+            review.getDateCreated(),
+            review.getDateReview(),
             review.getStars(),
             review.getText()
         );
     }
 
     public static record Crim(String name, boolean isKnown) {}
+    public static record Author(String name, String icon) {}
 }
 
 

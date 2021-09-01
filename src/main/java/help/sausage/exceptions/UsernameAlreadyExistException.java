@@ -1,4 +1,4 @@
-package help.sausage.validation;
+package help.sausage.exceptions;
 
 import help.sausage.dto.NewUserDto;
 

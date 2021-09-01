@@ -1,0 +1,51 @@
+review-card {
+  width: 100%;
+  padding: 16px;
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+  border-radius: 0.5em;
+  background-color: #f4f4f4;
+  display: block;
+}
+
+.review-card-author {
+  margin: 0;
+  padding-left: 16px;
+}
+
+.review-card-star-holder {
+  padding: 16px;
+  margin-left: 16px;
+}
+
+.review-card-text {
+  word-wrap: break-word;
+  padding-left: 32px;
+}
+
+.review-card-star-holder {
+  color: darkorange;
+  padding: 0;
+  margin-left: 64px;
+}
+
+.review-card-date {
+  opacity: 60%;
+}
+
+.review-card-user-icon {
+   width: 3em;
+   height: 3em;
+}
+
+.review-card-crim-list {
+  margin-left: 32px;
+}
+
+.review-card-star-icon {
+  size: 1em;
+  margin: 4px;
+}
+
+.review-card-crim-name {
+  margin-right: 1em;
+}

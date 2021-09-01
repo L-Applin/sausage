@@ -16,13 +16,15 @@ public class ReviewDto {
     @NotNull
     private UUID reviewId;
     @NotNull
-    private String author;
+    private AuthorDto author;
     @NotNull
     private List<String> knownCrims;
     @NotNull
     private List<String> unknownCrims;
     @NotNull
-    private LocalDate date;
+    private LocalDate dateCreated;
+    @NotNull
+    private LocalDate dateReview;
     @NotNull
     private int stars;
     @NotNull

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 public interface UserController {
 
-    String BASE_URL = "/v1/user";
+    String BASE_URL = "/api/user";
 
     ResponseEntity<UserDto> createNewUser(NewUserDto userDto);
 
