@@ -2,6 +2,8 @@ package help.sausage.entity;
 
 
 import java.security.SecureRandom;
+import java.util.Arrays;
+import java.util.NoSuchElementException;
 import java.util.Random;
 
 public enum UserIcon {
@@ -26,6 +28,13 @@ public enum UserIcon {
 
     public static final String location = "images/user-icons/";
     private static final String DEFAULT_FILE_EXTENSION = ".png";
+
+    public static UserIcon from(String icon) {
+        return Arrays.stream(values()).filter(str ->
+            str.name().replace('_', '-').toUpperCase().equals(icon))
+            .findFirst()
+            .orElseThrow(() -> new NoSuchElementException(icon));
+    }
 
     public String asUrl() {
         return location + this.name().replace('_', '-').toLowerCase() + DEFAULT_FILE_EXTENSION;

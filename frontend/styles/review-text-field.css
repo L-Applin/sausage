@@ -1,4 +1,5 @@
 [part="input-field"] {
   border-radius: 0.5em;
-  padding: 0;
+  padding: 16px;
+  margin-top: 24px;
 }

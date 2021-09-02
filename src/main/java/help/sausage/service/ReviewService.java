@@ -10,6 +10,7 @@ import help.sausage.entity.AppUserEntity;
 import help.sausage.repository.ReviewRepository;
 import help.sausage.repository.UnkownCrimsRepository;
 import help.sausage.repository.AppUserRepository;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -46,7 +47,7 @@ public class ReviewService {
                 author ,
                 knownCrims,
                 Collections.emptyList(),
-                null,
+                LocalDate.now(),
                 reviewDto.getDate(),
                 reviewDto.getStars(),
                 reviewDto.getText());

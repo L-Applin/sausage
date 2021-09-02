@@ -31,7 +31,9 @@ public class ReviewClient implements ReviewController {
 
     @Override
     public ResponseEntity<ReviewDto> createNewReview(NewReviewDto reviewDto) {
-        return null;
+        final String url = host + BASE_URL;
+        HttpEntity<NewReviewDto> body = new HttpEntity<>(reviewDto);
+        return frontEndClient.exchange(url, HttpMethod.POST, body, ReviewDto.class);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package help.sausage.ui.component;
 
+import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;

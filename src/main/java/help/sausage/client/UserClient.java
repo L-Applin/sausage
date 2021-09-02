@@ -3,6 +3,7 @@ package help.sausage.client;
 import help.sausage.controller.UserController;
 import help.sausage.dto.NewUserDto;
 import help.sausage.dto.UserDto;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +29,10 @@ public class UserClient implements UserController {
 
     @Override
     public ResponseEntity<UserDto> getUserByUsername(String username) {
-        return null;
+        final String url = host + BASE_URL + "/{username}";
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url)
+                .uriVariables(Map.of("username", username));
+        return frontEndClient.getForEntity(builder.toUriString(), UserDto.class);
     }
 
 }

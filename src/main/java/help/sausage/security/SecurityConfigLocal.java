@@ -63,8 +63,8 @@ public class SecurityConfigLocal extends WebSecurityConfigurerAdapter {
         .and()
             .authorizeRequests()
             .requestMatchers(SecurityUtils::isFrameworkInternalRequest).permitAll()
-            .anyRequest().authenticated()
             .antMatchers("/api/**").permitAll() // todo
+            .anyRequest().authenticated()
         .and()
             .formLogin()
             .loginPage(LOGIN_URL).permitAll()

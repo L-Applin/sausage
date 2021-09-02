@@ -1,5 +1,6 @@
 package help.sausage.ui;
 
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.Unit;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Image;
@@ -15,7 +16,11 @@ import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinSession;
+import help.sausage.client.UserClient;
+import help.sausage.dto.UserDto;
 import help.sausage.ui.data.SessionUser;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 
 @Route("login")
 @PageTitle("login | Sausage app")
@@ -23,7 +28,7 @@ public class LoginView extends VerticalLayout implements BeforeEnterObserver {
 
     private LoginForm login = new LoginForm();
 
-    public LoginView() {
+    public LoginView(@Autowired UserClient userClient) {
         addClassName("login-view");
         setDefaultHorizontalComponentAlignment(Alignment.CENTER);
 
@@ -35,8 +40,18 @@ public class LoginView extends VerticalLayout implements BeforeEnterObserver {
         login.setAction("login");
         login.addLoginListener(e -> {
             Notification.show("User successfully authenticated: " + e.getUsername());
-            VaadinSession.getCurrent().setAttribute(SessionUser.class, new SessionUser(e.getUsername(), null, "")); //todo
+            ResponseEntity<UserDto> fetchedUserResponse = userClient.getUserByUsername(e.getUsername());
+            if (!fetchedUserResponse.getStatusCode().is2xxSuccessful()
+                    || fetchedUserResponse.getBody() == null) {
+                // error while fetching full user from backend
+                Notification.show("There was an error while trying to retreive user information.");
+            } else {
+                UserDto fetchedUser = fetchedUserResponse.getBody();
+                VaadinSession.getCurrent().setAttribute(SessionUser.class,
+                        new SessionUser(fetchedUser.username(), fetchedUser.id(), fetchedUser.icon()));
+            }
         });
+        UI.getCurrent().getPage().executeJs("document.getElementById(\"vaadinLoginUsername\").focus()");
     }
 
     private HorizontalLayout creatAccountLayout() {

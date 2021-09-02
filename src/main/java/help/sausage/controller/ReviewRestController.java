@@ -29,7 +29,7 @@ public class ReviewRestController implements ReviewController {
     private final ReviewService reviewService;
 
     @PostMapping
-    public ResponseEntity<ReviewDto> createNewReview(@RequestBody @Valid NewReviewDto reviewDto) {
+    public ResponseEntity<ReviewDto> createNewReview(@RequestBody NewReviewDto reviewDto) {
         ReviewDto created = reviewService.createNewReview(reviewDto);
         return ResponseEntity.ok(created);
     }
@@ -51,6 +51,5 @@ public class ReviewRestController implements ReviewController {
         List<ReviewDto> reviews = reviewService.getReviewsByAuthorUsername(username);
         return ResponseEntity.ok(reviews);
     }
-
 
 }
