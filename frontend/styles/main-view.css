@@ -6,3 +6,100 @@
 vaadin-horizontal-layout > h2 {
   margin: 0 0 0 16px;
 }
+
+.main-view-center {
+  width: 100%;
+  padding: 0;
+
+}
+
+.main-review-form {
+  width: 100%;
+}
+
+.main-left-column {
+  width: 300px;
+}
+
+.main-right-column {
+  width: 300px;
+}
+
+.main-review-from-descr {
+  width: 100%;
+  height: 10em;
+  margin: 0;
+  border-radius: 0;
+  font-size: large;
+}
+
+
+
+/*
+  ===================
+      Left column
+  ===================
+*/
+
+.main-left-column {
+
+}
+
+.main-left-sausage-logo {
+  width: 14em;
+}
+
+.main-left-menu {
+  margin-top: 2em;
+}
+
+.main-left-column > h1 {
+  color: black;
+}
+
+.main-left-sausage-item {
+  color: black;
+  margin: 0.5em 0;
+}
+
+.main-left-menu-item > h2 > a {
+  color: black;
+}
+
+.main-left-menu-item > h2:hover{
+  opacity: 0.5;
+}
+
+.main-left-descr {
+  width: 50%;
+  text-align: end;
+  margin-top: 0;
+}
+
+.searchbox-text-field {
+  width: 70%;
+}
+
+
+
+
+
+/*
+  ===================
+      Right column
+  ===================
+*/
+
+.main-right-user-layout {
+  background-color: #d3d3d3;
+  border-radius: 2em;
+  padding: 0.5em;
+}
+
+.main-right-user-layout:hover {
+  background-color: #C0C0C0;
+}
+
+.main-right-user-layout > h2 {
+  padding-right: 1em;
+}

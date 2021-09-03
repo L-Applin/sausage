@@ -4,7 +4,8 @@ use sausage;
 create table if not exists app_user (
     user_id     varchar(255) not null unique default (uuid()),
     username    varchar(255) not null unique,
-    icon        varchar(255) not null default 'cat'
+    icon        varchar(255) not null default 'cat',
+    date_joined timestamp not null default now()
 
 ) engine=InnoDB;
 
@@ -18,7 +19,7 @@ create table if not exists review (
     review_id       varchar(255) not null unique default (uuid()),
     author_id       varchar(255) not null ,
     date_created    timestamp not null default now(),
-    date_review     timestamp,
+    date_review     timestamp not null,
     stars           smallint not null default 0,
     text            varchar(512) not null default '',
 

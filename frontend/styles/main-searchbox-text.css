@@ -1,0 +1,5 @@
+:host(.transparent-searchbox) [part="input-field"] {
+  width: 95%;
+  border-radius: 4em;
+  background-color: transparent;
+}

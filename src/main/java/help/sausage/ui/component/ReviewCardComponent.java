@@ -10,6 +10,7 @@ import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.html.Hr;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.html.Span;
@@ -28,6 +29,8 @@ import help.sausage.ui.data.Review.Author;
 import help.sausage.ui.data.Review.Crim;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Date;
 import java.util.List;
 
@@ -41,7 +44,7 @@ public class ReviewCardComponent extends VerticalLayout {
     public static final Review default_review = new Review(
             new Author("alice", "cat"),
             List.of(new Crim("McQueen", true), new Crim("Jafar", true), new Crim("Unknown", false), new Crim("Lightning", true)),
-            LocalDate.of(2021, 8, 3),
+            LocalDateTime.of(LocalDate.of(2021, 8, 3), LocalTime.MIDNIGHT),
             LocalDate.of(2021, 8, 3),
             4,
             """
@@ -96,9 +99,13 @@ public class ReviewCardComponent extends VerticalLayout {
         HorizontalLayout sub = new HorizontalLayout(starHolder, date);
         sub.setDefaultVerticalComponentAlignment(Alignment.CENTER);
 
+        Hr hr = new Hr();
+        hr.setClassName("review-card-seperator");
+
         add(authorTop);
         add(sub);
         add(descrContainer);
+        add(hr);
         add(crimsHolder);
     }
 

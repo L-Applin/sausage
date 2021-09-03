@@ -1,6 +1,7 @@
 package help.sausage.entity;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import javax.persistence.Column;
@@ -49,15 +50,15 @@ public class ReviewEntity {
     private List<UnknownCrimEntity> unknownCrims;
 
     @Column(name = "date_created")
-    private LocalDate dateCreated;
+    private LocalDateTime dateCreated;
 
     @Column(name = "date_review")
     private LocalDate reviewDate;
 
-    @Column
+    @Column(name = "stars")
     private int stars;
 
-    @Column
+    @Column(name = "text")
     private String text;
 
 }

@@ -31,7 +31,7 @@ public enum UserIcon {
 
     public static UserIcon from(String icon) {
         return Arrays.stream(values()).filter(str ->
-            str.name().replace('_', '-').toUpperCase().equals(icon))
+            str.name().replace('-', '_').toUpperCase().equals(icon))
             .findFirst()
             .orElseThrow(() -> new NoSuchElementException(icon));
     }

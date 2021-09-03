@@ -52,10 +52,11 @@ public class ReviewFormComponent extends VerticalLayout {
         // Create UI components
         reviewArea.setMaxLength(255);
         setFlexGrow(1, reviewArea);
-        reviewArea.setWidth("100%");
-        reviewArea.setHeight("8em");
-        reviewArea.getStyle().set("margin", "0px");
-        reviewArea.getStyle().set("border-radius", "0px");
+        reviewArea.setClassName("main-review-from-descr");
+//        reviewArea.setWidth("100%");
+//        reviewArea.setHeight("12em");
+//        reviewArea.getStyle().set("margin", "0px");
+//        reviewArea.getStyle().set("border-radius", "0px");
         datePicker.setWidth(9, Unit.EM);
         TextField crimsField = new TextField(null, "Who kidnapped you?");
         crimBoxHolder.setFlexWrap(FlexWrap.WRAP);

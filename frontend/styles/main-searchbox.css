@@ -1,3 +1,24 @@
-main-searchbox > icon {
-  margin: 0 0 0 32px;
+main-searchbox {
+  background-color: lightgray;
+  border-radius: 4em;
+}
+
+#searchbox-text-field {
+  width: 70%;
+  background-color: transparent;
+}
+
+#searchbox-icon {
+  margin: 0 8px 0 32px;
+  color: black;
+  opacity: 60%;
+}
+
+.transparent-searchbox {
+  margin: 0;
+  border-radius: 4em;
+}
+
+.transparent-searchbox:hover {
+  background-color: transparent;
 }

@@ -105,8 +105,6 @@ public class StarVoteSelectComponent extends HorizontalLayout {
         @Override
         public void handleEvent(DomEvent event) {
             amount = starclicked + 1;
-            Notification.show("Clicked on star index: " + starclicked);
-            Notification.show("Current total:   " + getAmount());
             setIcons(starclicked, "1", false);
         }
     }

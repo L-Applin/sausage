@@ -26,6 +26,8 @@ import help.sausage.dto.NewUserDto;
 import help.sausage.dto.UserDto;
 import help.sausage.entity.UserIcon;
 import help.sausage.ui.data.SessionUser;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -77,12 +79,12 @@ public class NewAccountView extends VerticalLayout {
 
         Binding<NewUserDto, String> usernameBinding = binder.forField(usernameField)
                 .withValidator(new StringLengthValidator("username must be between 4 and 128 character", 4, 128))
-                .bind(NewUserDto::username, (b, f) -> user = new NewUserDto(f, b.encodedPwd(), b.icon()));
+                .bind(NewUserDto::username, (b, f) -> user = new NewUserDto(f, b.encodedPwd(), b.icon(), b.dateJoined()));
 
         Binding<NewUserDto, String> pwdBinding = binder.forField(pwd)
                 .withValidator(new StringLengthValidator("password must be between %d and %d character".formatted(MIN_PWD_LENGTH, MAX_PWD_LENGTH),
                         MIN_PWD_LENGTH, MAX_PWD_LENGTH))
-                .bind(NewUserDto::username, (b, f) -> user = new NewUserDto(f, b.encodedPwd(), b.icon()));
+                .bind(NewUserDto::username, (b, f) -> user = new NewUserDto(f, b.encodedPwd(), b.icon(), b.dateJoined()));
 
         usernameField.addValueChangeListener(e -> usernameBinding.validate());
         pwd.addValueChangeListener(e -> pwdBinding.validate());
@@ -106,7 +108,7 @@ public class NewAccountView extends VerticalLayout {
 
     private void sendNewUser() {
         String encodedPwd = passwordEncoder.encode(pwd.getValue());
-        NewUserDto dto = new NewUserDto(usernameField.getValue(), encodedPwd, iconSelect.getValue().name);
+        NewUserDto dto = new NewUserDto(usernameField.getValue(), encodedPwd, iconSelect.getValue().name, LocalDateTime.now());
         ResponseEntity<?> res = userClient.createNewUser(dto);
         Notification.show(res.toString());
         if (res.getStatusCode().is2xxSuccessful() && res.getBody() != null) {

@@ -38,11 +38,10 @@ public class ReviewRestController implements ReviewController {
     public ResponseEntity<List<ReviewDto>> getAllReviewsPaginated(
             @RequestParam(defaultValue = "0", required = false) int page,
             @RequestParam(defaultValue = "10", required = false) int size,
-            @RequestParam(defaultValue = "reviewDate", required = false) String sortBy,
+            @RequestParam(defaultValue = "dateCreated", required = false) String sortBy,
             @RequestParam(defaultValue = "desc", required = false) String dir) {
         Page<ReviewDto> reviews = reviewService.getReviewsPaginated(page, size, sortBy, dir);
         ResponseEntity<List<ReviewDto>> res = ResponseEntity.ok(reviews.toList());
-        log.info(res.toString());
         return res;
     }
 

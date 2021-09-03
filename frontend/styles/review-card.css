@@ -1,10 +1,14 @@
 review-card {
   width: 100%;
-  padding: 16px;
+  padding: 16px 0;
   box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
   border-radius: 0.5em;
   background-color: #f4f4f4;
   display: block;
+}
+
+review-card:hover {
+  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
 }
 
 .review-card-author {
@@ -19,7 +23,7 @@ review-card {
 
 .review-card-text {
   word-wrap: break-word;
-  padding-left: 32px;
+  padding: 0 16px 0 32px;
 }
 
 .review-card-star-holder {
@@ -35,9 +39,11 @@ review-card {
 .review-card-user-icon {
    width: 3em;
    height: 3em;
+  padding-left: 16px ;
 }
 
 .review-card-crim-list {
+  border: 3px red;
   margin-left: 32px;
 }
 

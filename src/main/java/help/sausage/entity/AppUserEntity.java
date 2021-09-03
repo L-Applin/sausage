@@ -1,5 +1,7 @@
 package help.sausage.entity;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -31,5 +33,8 @@ public class AppUserEntity {
 
     @Column(name = "icon")
     private String icon;
+
+    @Column(name = "date_joined")
+    private LocalDateTime dateJoined;
 
 }

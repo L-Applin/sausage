@@ -1,41 +1,37 @@
 package help.sausage.ui;
 
-import static help.sausage.ui.component.ReviewCardComponent.default_review;
 import static help.sausage.ui.data.Review.fromDto;
 
 import com.vaadin.flow.component.UI;
-import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.CssImport;
-import com.vaadin.flow.component.html.Anchor;
+import com.vaadin.flow.component.dependency.StyleSheet;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Image;
-import com.vaadin.flow.component.html.Label;
-import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinSession;
 import help.sausage.client.ReviewClient;
-import help.sausage.client.UserClient;
-import help.sausage.dto.NewReviewDto;
 import help.sausage.dto.ReviewDto;
 import help.sausage.entity.UserIcon;
+import help.sausage.ui.component.LeftColumnComponent;
 import help.sausage.ui.component.ReviewCardComponent;
 import help.sausage.ui.component.ReviewFormComponent;
-import help.sausage.ui.component.SearchBox;
 import help.sausage.ui.data.Review;
 import help.sausage.ui.data.SessionUser;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 /*
 <div>Icons made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
  */
 @Route
 @CssImport("./styles/main-view.css")
+@PageTitle("Home | Sausage")
+@StyleSheet("http://fonts.googleapis.com/css?family=Cabin+Sketch")
 public class MainView extends VerticalLayout implements ReviewFormComponent.ReviewCreatedListener {
     private static final long serialVersionUID = 42L;
 
@@ -53,13 +49,12 @@ public class MainView extends VerticalLayout implements ReviewFormComponent.Revi
             UI.getCurrent().navigate("login");
             return;
         }
+
         VerticalLayout centerColumn = new VerticalLayout();
-        centerColumn.setWidth("640px");
-        centerColumn.getStyle().set("padding", "0px");
+        centerColumn.setClassName("main-view-center");
 
-
-        ReviewFormComponent buildForm = new ReviewFormComponent(reviewClient);
-        reviewHolder.setWidth("100%");
+        ReviewFormComponent reviewForm = new ReviewFormComponent(reviewClient);
+        reviewForm.setClassName("main-review-form");
         reviewHolder.setPadding(false);
 
         ResponseEntity<List<ReviewDto>> resp = reviewClient.getAllReviewsPaginated();
@@ -70,25 +65,21 @@ public class MainView extends VerticalLayout implements ReviewFormComponent.Revi
                     review -> reviewHolder.add(new ReviewCardComponent(fromDto(review))));
         }
 
-        centerColumn.add(buildForm, reviewHolder);
-        VerticalLayout left = leftColumn();
+        centerColumn.add(reviewForm, reviewHolder);
+        VerticalLayout left = new LeftColumnComponent();
         VerticalLayout right = userSection();
-        right.setWidth("200px");
-        left.setWidth("200px");
+        left.setClassName("main-left-column");
+        right.setClassName("main-right-column");
+
         HorizontalLayout wrapper = new HorizontalLayout(left, centerColumn, right);
         wrapper.expand(centerColumn);
         setHorizontalComponentAlignment(Alignment.CENTER, wrapper);
         add(wrapper);
     }
 
-    private VerticalLayout leftColumn() {
-        SearchBox searchBox = new SearchBox(Notification::show);
-        VerticalLayout layout = new VerticalLayout(searchBox, new H2("Home"));
-        return layout;
-    }
-
     private VerticalLayout userSection() {
         HorizontalLayout userLayout = new HorizontalLayout();
+        userLayout.setClassName("main-right-user-layout");
         userLayout.setDefaultVerticalComponentAlignment(Alignment.CENTER);
         H2 username = new H2(user.username());
         UserIcon userIcon = UserIcon.from(user.icon());
@@ -96,10 +87,8 @@ public class MainView extends VerticalLayout implements ReviewFormComponent.Revi
         avatar.setClassName("main-user-avatar");
         userLayout.add(avatar, username);
 
-        Anchor logout = new Anchor("/logout", "logout");
         VerticalLayout layout = new VerticalLayout();
-        layout.add(userLayout, logout);
-        layout.setHorizontalComponentAlignment(Alignment.END, logout);
+        layout.add(userLayout);
         return layout;
     }
 

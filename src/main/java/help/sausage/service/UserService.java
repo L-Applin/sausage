@@ -5,6 +5,9 @@ import help.sausage.dto.UserDto;
 import help.sausage.entity.AppUserEntity;
 import help.sausage.repository.AppUserRepository;
 import help.sausage.exceptions.UsernameAlreadyExistException;
+import help.sausage.utils.Null;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import javax.transaction.Transactional;
@@ -39,19 +42,24 @@ public class UserService {
     }
 
     private AppUserEntity fromDto(NewUserDto userDto) {
-        return new AppUserEntity(null, userDto.username(), userDto.icon());
+        return new AppUserEntity(
+                null,
+                userDto.username(),
+                userDto.icon(),
+                Null.orElse(userDto.dateJoined(), LocalDateTime.now())
+        );
     }
 
     private UserDto toDto(AppUserEntity appUserEntity) {
         return new UserDto(appUserEntity.getUserId(),
                 appUserEntity.getUsername(),
-                appUserEntity.getIcon());
+                appUserEntity.getIcon(),
+                appUserEntity.getDateJoined()
+                );
     }
 
     public Optional<UserDto> getUserByUsername(String username) {
         return appUserRepository.findByUsername(username).map(this::toDto);
     }
 
-    public void createNewUser(String username, String rawPwd) {
-    }
 }
