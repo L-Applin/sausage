@@ -1,6 +1,5 @@
 package help.sausage.entity;
 
-
 import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
