@@ -15,7 +15,7 @@ public class LeftColumnComponent extends VerticalLayout {
 
     public LeftColumnComponent() {
         SessionUser user = VaadinSession.getCurrent().getAttribute(SessionUser.class);
-        Image logo          = new Image("images/sausage-icon.png", "Sausage logo");
+        Image logo = new Image("images/sausage-icon.png", "Sausage logo");
         SearchBoxComponent searchBox = new SearchBoxComponent(Notification::show);
         List<H2> menuItems = List.of(
                 new H2(new Anchor("/", "Home")),

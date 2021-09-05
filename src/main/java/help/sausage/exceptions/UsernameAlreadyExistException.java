@@ -12,6 +12,6 @@ public class UsernameAlreadyExistException extends RuntimeException {
     }
 
     public UsernameAlreadyExistException(NewUserDto userDto) {
-        this.userDto = userDto;
+        this("Username '%s' already exist".formatted(userDto.username()), userDto);
     }
 }

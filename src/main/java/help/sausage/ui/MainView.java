@@ -2,7 +2,6 @@ package help.sausage.ui;
 
 import static help.sausage.ui.data.Review.fromDto;
 
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dependency.StyleSheet;
@@ -20,13 +19,9 @@ import help.sausage.entity.UserIcon;
 import help.sausage.ui.component.LeftColumnComponent;
 import help.sausage.ui.component.ReviewCardComponent;
 import help.sausage.ui.component.ReviewFormComponent;
-import help.sausage.ui.data.Review;
 import help.sausage.ui.data.SessionUser;
 import help.sausage.utils.ApplicationContextProvider;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 
 /*
@@ -58,6 +53,7 @@ public class MainView extends VerticalLayout implements ReviewFormComponent.Revi
         centerColumn.setClassName("main-view-center");
 
         ReviewFormComponent reviewForm = new ReviewFormComponent();
+        reviewForm.addOnReviewCreatedListener(this);
         reviewForm.setClassName("main-review-form");
         reviewHolder.setPadding(false);
 
@@ -98,18 +94,19 @@ public class MainView extends VerticalLayout implements ReviewFormComponent.Revi
 
     @Override
     public void onNewReview(ReviewDto reviewDto) {
-        Review review = fromDto(reviewDto);
-        List<Component> components;
-        try {
-            ResponseEntity<List<ReviewDto>> reviews = reviewClient.getAllReviewsPaginated();
-            components = reviews.getBody()
-                    .stream().map(r -> (Component) new ReviewCardComponent(review)).toList();
-        } catch (Exception e) {
-            Notification.show("Could not load new reviews");
-            components = reviewHolder.getChildren().toList();
-        }
-        reviewHolder.removeAll();
-        reviewHolder.add(new ReviewCardComponent(review));
-        components.forEach(reviewHolder::add);
+        UI.getCurrent().getPage().reload();
+//        Review review = fromDto(reviewDto);
+//        List<Component> components;
+//        try {
+//            ResponseEntity<List<ReviewDto>> reviews = reviewClient.getAllReviewsPaginated();
+//            components = reviews.getBody()
+//                    .stream().map(r -> (Component) new ReviewCardComponent(review)).toList();
+//        } catch (Exception e) {
+//            Notification.show("Could not load new reviews");
+//            components = reviewHolder.getChildren().toList();
+//        }
+//        reviewHolder.removeAll();
+//        reviewHolder.add(new ReviewCardComponent(review));
+//        components.forEach(reviewHolder::add);
     }
 }

@@ -1,6 +1,7 @@
 package help.sausage.controller;
 
 import help.sausage.dto.ErrorDto;
+import help.sausage.exceptions.UsernameAlreadyExistException;
 import java.util.NoSuchElementException;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.context.MessageSourceResolvable;
@@ -38,6 +39,13 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(NoSuchElementException.class)
     public ResponseEntity<ErrorDto> handleNoSuchElement(HttpServletRequest req, NoSuchElementException ex) {
+        ErrorDto errorDto = new ErrorDto(ex.getMessage(), req.getContextPath());
+        return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
+    }
+
+
+    @ExceptionHandler(UsernameAlreadyExistException.class)
+    public ResponseEntity<ErrorDto> handleUsernameExist(HttpServletRequest req, UsernameAlreadyExistException ex) {
         ErrorDto errorDto = new ErrorDto(ex.getMessage(), req.getContextPath());
         return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
     }

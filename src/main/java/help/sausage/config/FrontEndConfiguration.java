@@ -3,6 +3,7 @@ package help.sausage.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.server.VaadinRequest;
 import com.vaadin.flow.server.VaadinSession;
 import java.io.IOException;
@@ -11,12 +12,14 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 import javax.servlet.http.Cookie;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.impl.client.HttpClients;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestFactory;
@@ -25,9 +28,12 @@ import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.client.support.BasicAuthenticationInterceptor;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.web.client.DefaultResponseErrorHandler;
+import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
 
 @Configuration
+@Slf4j
 public class FrontEndConfiguration {
 
     public static final String JSESSIONID = "JSESSIONID";
@@ -50,6 +56,7 @@ public class FrontEndConfiguration {
         RestTemplate restTemplate = builder.build();
         restTemplate.getMessageConverters().add(mappingJackson2HttpMessageConverter);
         restTemplate.getInterceptors().add(new JsessionidInterceptor());
+//        restTemplate.setErrorHandler(new ErrorDtoErrorHandler());
         return restTemplate;
     }
 
@@ -65,4 +72,15 @@ public class FrontEndConfiguration {
         }
     }
 
+    private static class ErrorDtoErrorHandler extends DefaultResponseErrorHandler {
+
+        @Override
+        protected void handleError(ClientHttpResponse response, HttpStatus statusCode) {
+            try {
+                log.info("error with server request. %s".formatted(response.getStatusText()));
+            } catch (Exception e) {
+                Notification.show("Fatal error");
+            }
+        }
+    }
 }

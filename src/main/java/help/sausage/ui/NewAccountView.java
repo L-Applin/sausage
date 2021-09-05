@@ -1,10 +1,15 @@
 package help.sausage.ui;
 
+import static help.sausage.utils.Null.safe;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -22,10 +27,13 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinSession;
 import help.sausage.client.UserClient;
+import help.sausage.dto.ErrorDto;
 import help.sausage.dto.NewUserDto;
 import help.sausage.dto.UserDto;
 import help.sausage.entity.UserIcon;
 import help.sausage.ui.data.SessionUser;
+import help.sausage.utils.Null;
+import help.sausage.utils.ResponseWrapper;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -37,6 +45,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.client.HttpClientErrorException;
 
 @Route("account")
 @CssImport("./styles/create-account-view.css")
@@ -55,14 +64,19 @@ public class NewAccountView extends VerticalLayout {
 
     private final UserClient userClient;
     private final PasswordEncoder passwordEncoder;
+    private final ResponseWrapper responseWrapper;
 
     private NewUserDto user = new NewUserDto();
     Binder<NewUserDto> binder = new Binder<>();
+    private Label status = new Label();
 
 
-    public NewAccountView(@Autowired UserClient userClient, @Autowired PasswordEncoder passwordEncoder) {
+    public NewAccountView(@Autowired UserClient userClient,
+            @Autowired PasswordEncoder passwordEncoder,
+            @Autowired ResponseWrapper responseWrapper) {
         this.userClient = userClient;
         this.passwordEncoder = passwordEncoder;
+        this.responseWrapper = responseWrapper;
         pwd.setMinLength(MIN_PWD_LENGTH);
         pwd.setMaxLength(MAX_PWD_LENGTH);
 
@@ -89,7 +103,9 @@ public class NewAccountView extends VerticalLayout {
         usernameField.addValueChangeListener(e -> usernameBinding.validate());
         pwd.addValueChangeListener(e -> pwdBinding.validate());
 
-        add(usernameField, pwd, iconSelect, btn);
+        status.setVisible(false);
+        status.setId("create-account-error");
+        add(usernameField, pwd, iconSelect, btn, status);
     }
 
     private void createBtnClickListener(ClickEvent<Button> event) {
@@ -109,16 +125,18 @@ public class NewAccountView extends VerticalLayout {
     private void sendNewUser() {
         String encodedPwd = passwordEncoder.encode(pwd.getValue());
         NewUserDto dto = new NewUserDto(usernameField.getValue(), encodedPwd, iconSelect.getValue().name, LocalDateTime.now());
-        ResponseEntity<?> res = userClient.createNewUser(dto);
-        Notification.show(res.toString());
-        if (res.getStatusCode().is2xxSuccessful() && res.getBody() != null) {
-            UserDto user = (UserDto) res.getBody();
-            VaadinSession session = VaadinSession.getCurrent();
-            session.setAttribute(SessionUser.class, new SessionUser(user.username(), user.id(), user.icon()));
-            btn.getUI().ifPresent(ui -> ui.navigate(MainView.class));
-        } else {
-            Notification.show(res.toString());
-        }
+        responseWrapper.handleResponse(() -> userClient.createNewUser(dto),
+            this::onUserCreation,
+            e -> {
+                status.setVisible(true);
+                status.setText(e.getMsg());
+            });
+    }
+
+    private void onUserCreation(UserDto receivedUser) {
+        userClient.login(user.username(), user.encodedPwd());
+        btn.getUI().ifPresent(ui -> ui.navigate(LoginView.class));
+        Notification.show("Please login with your new user!");
     }
 
     private record ImageSelectItem(Image icon, String name) {

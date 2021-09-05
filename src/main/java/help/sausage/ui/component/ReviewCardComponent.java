@@ -143,7 +143,9 @@ public class ReviewCardComponent extends VerticalLayout {
         }
         try {
             Boolean b = reviewClient.hasUserLiked(review.reviewId()).getBody();
-            return orElse(b, false);
+            boolean safeB =  orElse(b, false);
+            this.likedByUser = safeB;
+            return safeB;
         } catch (Exception e) {
             log.warn("Error while fetching if user '{}' has liked review '{}'", user.uuid(), review.reviewId());
             return false;
@@ -157,7 +159,7 @@ public class ReviewCardComponent extends VerticalLayout {
 
     private void doLikeReview(ClickEvent<Icon> event) {
         if (likedByUser) {
-            Notification.show("Already liked!"); // todo: likes removal logic
+            Notification.show("Already liked! ~~~ TODO: remove like ~~~"); // todo: likes removal logic
             return;
         }
         ResponseEntity<Long> res = reviewClient.sendLike(this.review.reviewId());

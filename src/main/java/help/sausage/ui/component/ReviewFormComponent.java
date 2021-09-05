@@ -42,7 +42,7 @@ public class ReviewFormComponent extends VerticalLayout {
 
     private List<ReviewCreatedListener> reviewCreatedListeners = new ArrayList<>();
 
-    public void addListener(ReviewCreatedListener listener) {
+    public void addOnReviewCreatedListener(ReviewCreatedListener listener) {
         if (listener != null) {
             reviewCreatedListeners.add(listener);
         }
