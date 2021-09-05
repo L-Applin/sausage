@@ -6,20 +6,26 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Stream;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 public record Review (
+    UUID reviewId,
     Author author,
     List<Crim> crims,
     LocalDateTime dateCreated,
     LocalDate dateReview,
     int stars,
-    String text) {
+    String text,
+    long likes,
+    long comments
+    ) {
 
     public static Review fromDto(ReviewDto review) {
         return new Review(
+            review.getReviewId(),
             new Author(review.getAuthor().getName(), review.getAuthor().getIcon()),
             Stream.concat(
                 review.getKnownCrims().stream().map(c -> new Crim(c, true)),
@@ -28,7 +34,9 @@ public record Review (
             review.getDateCreated(),
             review.getDateReview(),
             review.getStars(),
-            review.getText()
+            review.getText(),
+            review.getTotalLikes(),
+            review.getTotalComments()
         );
     }
 

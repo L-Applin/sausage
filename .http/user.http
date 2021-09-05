@@ -8,8 +8,12 @@ Content-Type: application/json
 
 
 ###
-GET {{host}}/api/user/olive
+GET {{host}}/api/user/Alice
 
 
 ###
-POST {{host}}/api/login
+POST {{host}}/login?username=Applin&password=1234qwer
+
+
+###
+POST {{host}}/logout

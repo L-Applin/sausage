@@ -7,6 +7,5 @@ import lombok.Data;
 public record SessionUser(
         String username,
         UUID uuid,
-        String icon
-        )
+        String icon)
 {}

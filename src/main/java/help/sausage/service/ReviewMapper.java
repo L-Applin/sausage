@@ -7,7 +7,7 @@ import help.sausage.entity.AppUserEntity;
 
 public class ReviewMapper {
 
-    public static ReviewDto toDto(ReviewEntity review) {
+    public static ReviewDto toDto(ReviewEntity review, long totalLikes, long totalComments) {
         AuthorDto author = new AuthorDto(review.getAuthor().getUsername(), review.getAuthor().getIcon());
         return new ReviewDto(
                 review.getReviewId(),
@@ -17,6 +17,8 @@ public class ReviewMapper {
                 review.getDateCreated(),
                 review.getReviewDate(),
                 review.getStars(),
+                totalLikes,
+                totalComments,
                 review.getText());
     }
 

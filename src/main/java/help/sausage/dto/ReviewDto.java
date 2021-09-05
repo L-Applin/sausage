@@ -29,5 +29,9 @@ public class ReviewDto {
     @NotNull
     private int stars;
     @NotNull
+    private long totalLikes;
+    @NotNull
+    private long totalComments;
+    @NotNull
     private String text;
 }

@@ -14,8 +14,12 @@ public interface ReviewRepository extends CrudRepository<ReviewEntity, UUID> {
     List<ReviewEntity> findAllByAuthorUsername(String username, Sort sort);
     Page<ReviewEntity> findAll(Pageable page);
 
-//    @Query("select distinct ReviewEntity from ReviewEntity re join CriminalInvolvedEntity c join UserEntity u where u.username=:crimName")
     @Query(nativeQuery = true,
-            value = "select distinct * from review r natural join crims_involved c natural join user u where u.username=:crimName")
+            value = "select distinct * from sausage.reviews r natural join sausage.crims_involved c natural join sausage.app_users u where u.username=:crimName")
     List<ReviewEntity> findAllCrimReviewByCrimName(@Param("crimName") String crimName);
+
+    @Query(nativeQuery = true,
+            value = "select count(*) from sausage.review_likes r where r.review_id=:reviewId")
+    long countNumberOfLikes(@Param("reviewId") String reviewId);
+
 }

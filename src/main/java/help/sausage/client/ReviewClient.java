@@ -4,7 +4,10 @@ import help.sausage.controller.ReviewController;
 import help.sausage.dto.NewReviewDto;
 import help.sausage.dto.ReviewDto;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -84,7 +87,38 @@ public class ReviewClient implements ReviewController {
     @Override
     public ResponseEntity<List<ReviewDto>> getReviewByUsername(String username) {
         final String url = host + BASE_URL + GET_REVIEW_BY_USERNAME_URL;
-        return frontEndClient.exchange(host + "/v1/review/{username}",
-                HttpMethod.GET, HttpEntity.EMPTY, REVIEW_LIST_RESPONSE_TYPE, username);
+        return frontEndClient.exchange(url,
+                HttpMethod.GET,
+                HttpEntity.EMPTY,
+                REVIEW_LIST_RESPONSE_TYPE,
+                username);
+    }
+
+    @Override
+    public ResponseEntity<Long> sendLike(UUID reviewId) {
+        // todo basic auth
+        final String templateUrl = host + BASE_URL + SEND_LIKE_URL;
+        Map<String, Object> uriVar = new HashMap<>();
+        uriVar.put("reviewId", reviewId.toString());
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(templateUrl)
+                .uriVariables(uriVar);
+        return frontEndClient.exchange(builder.toUriString(),
+                HttpMethod.PATCH,
+                HttpEntity.EMPTY,
+                Long.class);
+    }
+
+    @Override
+    public ResponseEntity<Boolean> hasUserLiked(UUID reviewId) {
+        final String templateUrl = host + BASE_URL + HAS_LIKED_REVIEWD_URL;
+        Map<String, Object> uriVar = new HashMap<>();
+        uriVar.put("reviewId", reviewId.toString());
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(templateUrl)
+                .uriVariables(uriVar);
+        return frontEndClient.exchange(builder.toUriString(),
+                HttpMethod.GET,
+                HttpEntity.EMPTY,
+                Boolean.class);
+
     }
 }

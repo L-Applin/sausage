@@ -2,7 +2,6 @@ package help.sausage.ui.component;
 
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.Key;
-import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.Unit;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.datepicker.DatePicker;
@@ -19,12 +18,15 @@ import help.sausage.client.ReviewClient;
 import help.sausage.dto.NewReviewDto;
 import help.sausage.dto.ReviewDto;
 import help.sausage.ui.data.SessionUser;
+import help.sausage.utils.ApplicationContextProvider;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 
 @CssImport(value="./styles/review-text-field.css", themeFor="vaadin-text-area")
+@Slf4j
 public class ReviewFormComponent extends VerticalLayout {
 
     public interface ReviewCreatedListener {
@@ -46,17 +48,12 @@ public class ReviewFormComponent extends VerticalLayout {
         }
     }
 
-    public ReviewFormComponent(ReviewClient reviewClient) {
-        this.reviewClient = reviewClient;
-
+    public ReviewFormComponent() {
+        this.reviewClient = ApplicationContextProvider.getCtx().getBean(ReviewClient.class);
         // Create UI components
         reviewArea.setMaxLength(255);
         setFlexGrow(1, reviewArea);
         reviewArea.setClassName("main-review-from-descr");
-//        reviewArea.setWidth("100%");
-//        reviewArea.setHeight("12em");
-//        reviewArea.getStyle().set("margin", "0px");
-//        reviewArea.getStyle().set("border-radius", "0px");
         datePicker.setWidth(9, Unit.EM);
         TextField crimsField = new TextField(null, "Who kidnapped you?");
         crimBoxHolder.setFlexWrap(FlexWrap.WRAP);
@@ -71,7 +68,7 @@ public class ReviewFormComponent extends VerticalLayout {
 
         Button createButton = new Button("Review");
         createButton.setWidth("100%");
-        createButton.addClickListener(this::onClick);
+        createButton.addClickListener(this::submitNewReview);
         HorizontalLayout formLayout = new HorizontalLayout(datePicker, crimsField, stars, createButton);
         formLayout.setVerticalComponentAlignment(Alignment.CENTER, stars);
         formLayout.setFlexGrow( 2, createButton);
@@ -88,7 +85,7 @@ public class ReviewFormComponent extends VerticalLayout {
         add(reviewArea, crimBoxHolder, formLayout);
     }
 
-    private void onClick(ClickEvent<Button> event) {
+    private void submitNewReview(ClickEvent<Button> event) {
         SessionUser user = VaadinSession.getCurrent().getAttribute(SessionUser.class);
         List<String> crimNames = crimBoxHolder.getChildren()
                 .map(el -> ((KnownCrimBtnComponent) el).getCrimName()).toList();
@@ -99,8 +96,9 @@ public class ReviewFormComponent extends VerticalLayout {
                 stars.getAmount(),
                 reviewArea.getValue());
         ResponseEntity<ReviewDto> response = reviewClient.createNewReview(newReview);
-        if (!response.getStatusCode().is2xxSuccessful() || response.getBody() != null) {
+        if (!response.getStatusCode().is2xxSuccessful() || response.getBody() == null) {
             Notification.show("error creating new review: %s".formatted(newReview.toString()));
+            log.error(response.toString());
         } else {
             reviewCreatedListeners.forEach(l -> l.onNewReview(response.getBody()));
         }

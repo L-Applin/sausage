@@ -30,6 +30,7 @@ review-card:hover {
   color: darkorange;
   padding: 0;
   margin-left: 64px;
+  opacity: 60%;
 }
 
 .review-card-date {
@@ -54,4 +55,54 @@ review-card:hover {
 
 .review-card-crim-name {
   margin-right: 1em;
+}
+
+#review-card-social {
+  margin: 0;
+  padding: 8px 0 0 0 ;
+}
+
+#review-card-social-likes {
+  padding: 8px;
+  margin: 8px;
+  align-items: end;
+}
+
+#review-card-social-likes > iron-icon {
+  padding: 0;
+  margin: 0;
+  color: #EE7777;
+  opacity: 60%;
+}
+
+#review-card-social-likes > label {
+  padding: 0;
+  margin: 0;
+  opacity: 60%;
+}
+
+
+#review-card-social-comments {
+  padding: 8px;
+  margin: 8px;
+  align-items: end;
+}
+
+#review-card-social-comments > iron-icon {
+  padding: 0;
+  margin: 0;
+  opacity: 60%;
+}
+
+#review-card-social-comments > label {
+  padding: 0;
+  margin: 0;
+  opacity: 60%;
+}
+
+
+#review-card-seperator {
+  /*background-color: black;*/
+  /*width: 90%;*/
+  margin: 8px 32px 8px 32px;
 }

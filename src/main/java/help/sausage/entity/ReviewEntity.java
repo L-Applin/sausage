@@ -21,7 +21,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
 @Entity
-@Table(name = "review", schema = "sausage")
+@Table(name = "reviews", schema = "sausage")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

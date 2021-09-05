@@ -37,7 +37,7 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(NoSuchElementException.class)
-    public ResponseEntity<ErrorDto> handleNoSuchElement(HttpServletRequest req, UsernameNotFoundException ex) {
+    public ResponseEntity<ErrorDto> handleNoSuchElement(HttpServletRequest req, NoSuchElementException ex) {
         ErrorDto errorDto = new ErrorDto(ex.getMessage(), req.getContextPath());
         return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
     }

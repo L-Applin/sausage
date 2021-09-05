@@ -16,6 +16,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -40,7 +41,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(WebSecurity web) {
         web.ignoring()
                 .antMatchers(
-    "/api/**",
+//    "/api/**",
                 "/account",
                 "/VAADIN/**",
                 "/favicon.ico",
@@ -59,11 +60,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //        http.authorizeRequests().anyRequest().permitAll().and().csrf().disable();
         http
         .csrf().disable()
-        .requestCache().requestCache(new CustomRequestCache())
-        .and()
+        .requestCache().requestCache(new CustomRequestCache()).and()
             .authorizeRequests()
             .requestMatchers(SecurityUtils::isFrameworkInternalRequest).permitAll()
-            .antMatchers("/api/**").permitAll() // todo
+            .antMatchers("/api/review/*/like").hasAuthority("USER")
+            .antMatchers("/api/**").permitAll()
             .anyRequest().authenticated()
         .and()
             .formLogin()
@@ -71,9 +72,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .loginProcessingUrl(LOGIN_PROCESSING_URL)
             .failureUrl(LOGIN_FAILURE_URL)
         .and()
-            .logout().logoutSuccessUrl(LOGOUT_SUCCESS_URL);
+            .logout().logoutSuccessUrl(LOGOUT_SUCCESS_URL)
+//        .and().httpBasic()
+        ;
     }
-
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -87,8 +89,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        JdbcUserDetailsManager man = jdbcUserDetailsManager();
-        auth.userDetailsService(man);
+        auth.userDetailsService(jdbcUserDetailsManager()).passwordEncoder(passwordEncoder())
+                .and()
+            .jdbcAuthentication().dataSource(dataSource);
     }
 
 }

@@ -10,10 +10,4 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class CriminalService {
 
-    private final ReviewRepository reviewRepository;
-
-    public List<ReviewDto> getReviewBuCrimUsername(String crimUsername) {
-        return reviewRepository.findAllCrimReviewByCrimName(crimUsername)
-                .stream().map(ReviewMapper::toDto).toList();
-    }
 }
