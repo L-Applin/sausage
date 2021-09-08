@@ -76,6 +76,7 @@ public class ReviewFormComponent extends VerticalLayout {
         formLayout.setMargin(false);
         formLayout.setJustifyContentMode(JustifyContentMode.BETWEEN);
         formLayout.getStyle().set("margin", "0px");
+        formLayout.setWidth("100%");
 
         getStyle().set("padding", "0px");
 

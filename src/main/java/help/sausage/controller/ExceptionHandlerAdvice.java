@@ -1,6 +1,7 @@
 package help.sausage.controller;
 
 import help.sausage.dto.ErrorDto;
+import help.sausage.exceptions.UnknowneUsernameException;
 import help.sausage.exceptions.UsernameAlreadyExistException;
 import java.util.NoSuchElementException;
 import javax.servlet.http.HttpServletRequest;
@@ -48,6 +49,12 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
     public ResponseEntity<ErrorDto> handleUsernameExist(HttpServletRequest req, UsernameAlreadyExistException ex) {
         ErrorDto errorDto = new ErrorDto(ex.getMessage(), req.getContextPath());
         return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(UnknowneUsernameException.class)
+    public ResponseEntity<ErrorDto> handleUnknowneUsername(HttpServletRequest req, UnknowneUsernameException ex) {
+        ErrorDto errorDto = new ErrorDto(ex.getMessage(), req.getContextPath());
+        return new ResponseEntity<>(errorDto, HttpStatus.NOT_FOUND);
     }
 
 }

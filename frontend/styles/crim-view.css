@@ -1,0 +1,89 @@
+#crim-view-grid {
+  overflow: scroll;
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;     /* Firefox */
+  /*display: block;*/
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+#crim-view-grid::-webkit-scrollbar {
+  display: none;
+}
+
+#crim-info-header {
+  margin: 1em 8em 0 8em;
+  padding: 1.5em 9em;
+  background-color: lightgrey;
+  border-radius: 3em;
+}
+
+#table {
+  overflow: hidden;
+}
+
+#crim-info-img {
+  width: 6em;
+  margin-right: 1em;
+}
+
+#crim-info-name {
+  font-size: 2em;
+  font-family: Futura, sans-serif;
+}
+
+#crim-info-stats {
+  padding-bottom: 0;
+}
+
+.crim-info-item {
+  margin: 0;
+  width: 100%;
+  /*background-color: lightgrey;*/
+  border: 1px;
+}
+
+.crim-info-item-name {
+  font-weight: bold;
+}
+
+.crim-info-item-stars-icon {
+  color: darkorange;
+  padding: 0;
+  opacity: 60%;
+}
+
+
+/**************/
+
+#crim-view-grid {
+  margin: 0;
+  width: 100%;
+  height: max-content;
+  border: none !important;
+}
+
+#crim-view-grid vaadin-grid-cell-content {
+  padding: 0.5em;
+  border: none !important;
+}
+
+:host(#crim-view-grid) > div > table  {
+  overflow: hidden;
+}
+
+#crim-view-grid vaadin-grid-cell-content {
+  padding: 1em;
+  border: none !important;
+}
+
+:host(:not([theme~="no-row-borders"])) [part~="cell"]:not([part~="details-cell"]) {
+  border-top: none !important;
+}
+
+[part="cell"] {
+  border-top: none !important;
+}
+
+:host(#crim-view-grid) {
+  overflow: hidden;
+}

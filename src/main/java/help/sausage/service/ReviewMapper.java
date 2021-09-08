@@ -2,8 +2,8 @@ package help.sausage.service;
 
 import help.sausage.dto.AuthorDto;
 import help.sausage.dto.ReviewDto;
-import help.sausage.entity.ReviewEntity;
 import help.sausage.entity.AppUserEntity;
+import help.sausage.entity.ReviewEntity;
 
 public class ReviewMapper {
 
@@ -21,5 +21,6 @@ public class ReviewMapper {
                 totalComments,
                 review.getText());
     }
+
 
 }

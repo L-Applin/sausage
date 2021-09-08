@@ -1,18 +1,11 @@
 package help.sausage.ui;
 
-import static help.sausage.utils.Null.safe;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.CssImport;
-import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.notification.Notification;
-import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.textfield.PasswordField;
@@ -25,27 +18,18 @@ import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.validator.StringLengthValidator;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.server.VaadinSession;
 import help.sausage.client.UserClient;
-import help.sausage.dto.ErrorDto;
 import help.sausage.dto.NewUserDto;
 import help.sausage.dto.UserDto;
 import help.sausage.entity.UserIcon;
-import help.sausage.ui.data.SessionUser;
-import help.sausage.utils.Null;
 import help.sausage.utils.ResponseWrapper;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.aspectj.weaver.ast.Not;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.client.HttpClientErrorException;
 
 @Route("account")
 @CssImport("./styles/create-account-view.css")
@@ -54,6 +38,8 @@ public class NewAccountView extends VerticalLayout {
 
     public static final int MIN_PWD_LENGTH = 8;
     public static final int MAX_PWD_LENGTH = 64;
+    public static final int MIN_USERNAME_LENGTH = 2;
+    public static final int MAX_USERNAME_LENGTH = 32;
 
     private final PasswordField pwd =
             new PasswordField("Password", "%d-%d char".formatted(MIN_PWD_LENGTH, MAX_PWD_LENGTH));
@@ -92,11 +78,14 @@ public class NewAccountView extends VerticalLayout {
         btn.setClassName("create-account-btn");
 
         Binding<NewUserDto, String> usernameBinding = binder.forField(usernameField)
-                .withValidator(new StringLengthValidator("username must be between 4 and 128 character", 4, 128))
+                .withValidator(new StringLengthValidator(
+                        "username must be between %d and %d character".formatted(MIN_USERNAME_LENGTH, MAX_USERNAME_LENGTH),
+                        MIN_USERNAME_LENGTH, MAX_USERNAME_LENGTH))
                 .bind(NewUserDto::username, (b, f) -> user = new NewUserDto(f, b.encodedPwd(), b.icon(), b.dateJoined()));
 
         Binding<NewUserDto, String> pwdBinding = binder.forField(pwd)
-                .withValidator(new StringLengthValidator("password must be between %d and %d character".formatted(MIN_PWD_LENGTH, MAX_PWD_LENGTH),
+                .withValidator(new StringLengthValidator(
+                        "password must be between %d and %d character".formatted(MIN_PWD_LENGTH, MAX_PWD_LENGTH),
                         MIN_PWD_LENGTH, MAX_PWD_LENGTH))
                 .bind(NewUserDto::username, (b, f) -> user = new NewUserDto(f, b.encodedPwd(), b.icon(), b.dateJoined()));
 

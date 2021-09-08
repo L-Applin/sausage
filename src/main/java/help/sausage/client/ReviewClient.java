@@ -3,6 +3,7 @@ package help.sausage.client;
 import help.sausage.controller.ReviewController;
 import help.sausage.dto.NewReviewDto;
 import help.sausage.dto.ReviewDto;
+import help.sausage.dto.ReviewUpdateDto;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -119,6 +120,19 @@ public class ReviewClient implements ReviewController {
                 HttpMethod.GET,
                 HttpEntity.EMPTY,
                 Boolean.class);
+    }
 
+    @Override
+    public ResponseEntity<ReviewDto> updateReview(UUID reviewId, ReviewUpdateDto reviewDto) {
+        final String templateUrl = host + BASE_URL + PATCH_REVIEW_URL;
+        HttpEntity<ReviewUpdateDto> body = new HttpEntity<>(reviewDto);
+        Map<String, Object> uriVar = new HashMap<>();
+        uriVar.put("reviewId", reviewId.toString());
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(templateUrl)
+                .uriVariables(uriVar);
+        return frontEndClient.exchange(builder.toUriString(),
+                HttpMethod.PATCH,
+                body,
+                ReviewDto.class);
     }
 }

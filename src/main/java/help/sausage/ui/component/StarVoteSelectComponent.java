@@ -1,14 +1,13 @@
 package help.sausage.ui.component;
 
-import com.vaadin.flow.component.Tag;
+import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.dom.DomEvent;
 import com.vaadin.flow.dom.DomEventListener;
-import org.w3c.dom.events.MouseEvent;
 
+@CssImport("./styles/main-review-form.css")
 public class StarVoteSelectComponent extends HorizontalLayout {
 
     private int amount = 0;
@@ -49,10 +48,7 @@ public class StarVoteSelectComponent extends HorizontalLayout {
 
     private Icon getIcon(VaadinIcon vaadinIcon) {
         Icon icon = vaadinIcon.create();
-        icon.setSize("1em");
-        icon.getStyle().set("margin", "0px");
-        icon.getStyle().set("padding", "2px");
-        icon.setColor("orange");
+        icon.setClassName("main-review-form-star-icon");
         return icon;
     }
 

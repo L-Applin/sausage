@@ -2,9 +2,7 @@ Search
  - search by ???
 
 Likes
- - backend
- - frontedn
- - add like
+ - remove likes
 
 Comments
  - backend
@@ -24,3 +22,6 @@ review date
  : 5 minutes agoe
  : yesterday
  : 3 months ago
+
+
+- no review date in the future

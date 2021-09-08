@@ -55,6 +55,9 @@ public class ReviewEntity {
     @Column(name = "date_review")
     private LocalDate reviewDate;
 
+    @Column(name = "date_updated", nullable = true)
+    private LocalDateTime updated;
+
     @Column(name = "stars")
     private int stars;
 

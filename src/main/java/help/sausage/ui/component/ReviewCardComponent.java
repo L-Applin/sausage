@@ -31,7 +31,6 @@ import help.sausage.ui.data.SessionUser;
 import help.sausage.utils.ApplicationContextProvider;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 
 @Tag("review-card")
@@ -41,6 +40,7 @@ public class ReviewCardComponent extends VerticalLayout {
 
     private Review review;
     private ReviewClient reviewClient;
+    private SessionUser sessionUser;
 
     private VerticalLayout likesLayout = new VerticalLayout();
     private boolean likedByUser;
@@ -48,6 +48,7 @@ public class ReviewCardComponent extends VerticalLayout {
     public ReviewCardComponent(Review review) {
         this.review = review;
         this.reviewClient = ApplicationContextProvider.getCtx().getBean(ReviewClient.class);
+        this.sessionUser = VaadinSession.getCurrent().getAttribute(SessionUser.class);
 
         H2 author = new H2(review.author().name());
         author.setClassName("review-card-author");
@@ -114,7 +115,8 @@ public class ReviewCardComponent extends VerticalLayout {
         social.setId("review-card-social");
 
         likesLayout.setDefaultHorizontalComponentAlignment(Alignment.CENTER);
-        likesLayout.setId("review-card-social-likes");
+        likesLayout.setClassName("review-card-social-likes review-card-social-item");
+//        likesLayout.setClassName("review-card-social-item");
         Icon heart = userLikedReview() ? VaadinIcon.HEART.create() : VaadinIcon.HEART_O.create();
         Label likesAmount = new Label("%d".formatted(review.likes()));
         likesLayout.add(heart, likesAmount);
@@ -122,17 +124,31 @@ public class ReviewCardComponent extends VerticalLayout {
 
         VerticalLayout commentsLayout = new VerticalLayout();
         commentsLayout.setDefaultHorizontalComponentAlignment(Alignment.CENTER);
-        commentsLayout.setId("review-card-social-comments");
+        commentsLayout.setClassName("review-card-social-item");
         Icon commentsIcon = VaadinIcon.COMMENT.create();
         Label commentAmount = new Label("%d".formatted(review.comments()));
         commentsLayout.add(commentsIcon, commentAmount);
         commentsIcon.addClickListener(this::onCommentClicked);
 
+        if (sessionUser != null && review.author().name().equals(sessionUser.username())) {
+            VerticalLayout editLayout = new VerticalLayout();
+            editLayout.setDefaultHorizontalComponentAlignment(Alignment.CENTER);
+            editLayout.setClassName("review-card-social-item");
+            Icon editIcon = VaadinIcon.PENCIL.create();
+            editIcon.addClickListener(this::onEditClicked);
+            editLayout.add(editIcon);
+            social.add(editLayout);
+        }
         social.add(commentsLayout, likesLayout);
         wrapper.add(social);
         wrapper.setHorizontalComponentAlignment(Alignment.END, social);
 
         return wrapper;
+    }
+
+    private void onEditClicked(ClickEvent<Icon> event) {
+        //todo @Review
+        Notification.show("~~~ TODO: EDIT REVIEW ~~~");
     }
 
     private boolean userLikedReview() {
@@ -153,13 +169,13 @@ public class ReviewCardComponent extends VerticalLayout {
     }
 
     private void onCommentClicked(ClickEvent<Icon> event) {
-        //todo
-        Notification.show("~~~ TODO: CREATE NEW COMMENT ~~~");
+        //todo @Comments
+        Notification.show("~~~ TODO: COMMENTS ~~~");
     }
 
     private void doLikeReview(ClickEvent<Icon> event) {
         if (likedByUser) {
-            Notification.show("Already liked! ~~~ TODO: remove like ~~~"); // todo: likes removal logic
+            Notification.show("Already liked! ~~~ TODO: remove like ~~~"); // todo @Likes
             return;
         }
         ResponseEntity<Long> res = reviewClient.sendLike(this.review.reviewId());

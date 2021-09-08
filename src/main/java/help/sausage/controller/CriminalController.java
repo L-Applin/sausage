@@ -1,21 +1,16 @@
 package help.sausage.controller;
 
-import help.sausage.dto.NewReviewDto;
+import help.sausage.dto.CrimInfoDto;
 import help.sausage.dto.ReviewDto;
 import java.util.List;
-import javax.validation.Valid;
-import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 
 public interface CriminalController {
-    ResponseEntity<ReviewDto> createNewReview(@RequestBody @Valid NewReviewDto reviewDto);
-    ResponseEntity<List<ReviewDto>> getAllReviewsPaginated(int page, int size, String sortBy, String dir);
+    String BASE_URL = "/api/criminal";
 
-    ResponseEntity<List<ReviewDto>> getReviewByUsername(@PathVariable String username);
+    String CRIM_REVIEWS_URL = "/reviews/{username}";
+    ResponseEntity<List<ReviewDto>> getReviewForCrim(String username, int page, int size, String sortBy, String dir);
 
+    String CRIM_INFO_URL = "/{username}";
+    ResponseEntity<CrimInfoDto> getCrimInfo(String username);
 }

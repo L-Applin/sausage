@@ -2,6 +2,7 @@ package help.sausage.controller;
 
 import help.sausage.dto.NewReviewDto;
 import help.sausage.dto.ReviewDto;
+import help.sausage.dto.ReviewUpdateDto;
 import help.sausage.service.ReviewService;
 import java.util.List;
 import java.util.UUID;
@@ -71,6 +72,15 @@ public class ReviewRestController implements ReviewController {
     @GetMapping(HAS_LIKED_REVIEWD_URL)
     public ResponseEntity<Boolean> hasUserLiked(@PathVariable("reviewId") UUID reviewId) {
         return ResponseEntity.ok(reviewService.hasLiked(getLoggedUserName(), reviewId));
+    }
+
+
+    @Override
+    @PatchMapping(PATCH_REVIEW_URL)
+    public ResponseEntity<ReviewDto> updateReview(@PathVariable("reviewId") UUID reviewId,
+            @RequestBody ReviewUpdateDto review) {
+        ReviewDto updatedReview = reviewService.updateReview(reviewId, review);
+        return ResponseEntity.ok(updatedReview);
     }
 
     private String getLoggedUserName() {

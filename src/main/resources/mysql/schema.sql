@@ -20,6 +20,7 @@ create table if not exists reviews (
     author_id       varchar(255) not null ,
     date_created    timestamp not null default now(),
     date_review     timestamp not null,
+    date_updated    timestamp null default null,
     stars           smallint not null default 0,
     text            varchar(512) not null default '',
 
@@ -72,3 +73,20 @@ create table if not exists review_comments (
     constraint foreign key likes_user_fk(user_id)     references app_users(user_id) on delete cascade
 
 ) ;
+
+
+
+#### VIEWS
+create or replace view crim_info as
+select
+    au.username as username,
+    au.icon as icon,
+    count(r.review_id) as total,
+    avg(stars) score,
+    min(r.date_review) as first_review,
+    max(r.date_review) as last_review
+from reviews r
+         join crims_involved ci on r.review_id = ci.review_id # get all crims for the review
+         join (select username, user_id, icon from app_users) as au on ci.user_id = au.user_id        # get the crims username
+         group by au.username
+;

@@ -2,15 +2,10 @@ package help.sausage.controller;
 
 import help.sausage.dto.NewReviewDto;
 import help.sausage.dto.ReviewDto;
-import java.security.Principal;
+import help.sausage.dto.ReviewUpdateDto;
 import java.util.List;
 import java.util.UUID;
-import javax.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 
 public interface ReviewController {
     String BASE_URL = "/api/review";
@@ -27,4 +22,9 @@ public interface ReviewController {
 
     String HAS_LIKED_REVIEWD_URL = "/user/{reviewId}/like";
     ResponseEntity<Boolean> hasUserLiked(UUID ReviewId);
+
+
+    String PATCH_REVIEW_URL = "/{reviewId}";
+    ResponseEntity<ReviewDto> updateReview(UUID reviewId, ReviewUpdateDto review);
+
 }

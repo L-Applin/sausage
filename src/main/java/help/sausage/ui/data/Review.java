@@ -1,15 +1,13 @@
 package help.sausage.ui.data;
 
 import help.sausage.dto.ReviewDto;
+import help.sausage.dto.ReviewUpdateDto;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
-import lombok.AllArgsConstructor;
-import lombok.Data;
 
 public record Review (
     UUID reviewId,
@@ -38,6 +36,25 @@ public record Review (
             review.getTotalLikes(),
             review.getTotalComments()
         );
+
+    }
+
+    public ReviewUpdateDto toReviewUpdateDto(boolean updateCrims) {
+        final List<String> knownCrims = crims.stream()
+                .filter(Crim::isKnown)
+                .map(Crim::name)
+                .toList();
+        final List<String> unknownCrim = crims.stream()
+                .filter(Predicate.not(Crim::isKnown))
+                .map(Crim::name)
+                .toList();
+        return new ReviewUpdateDto(
+                knownCrims,
+                unknownCrim,
+                dateReview(),
+                stars(),
+                text(),
+                updateCrims);
     }
 
     public static record Crim(String name, boolean isKnown) {}

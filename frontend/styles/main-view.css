@@ -1,3 +1,19 @@
+.main-vew {
+  padding-bottom: 0;
+}
+
+.main-view-horizontal-wrapper {
+  padding: 0;
+  margin: 0;
+}
+
+.main-view-center {
+  height: 100vh;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+}
+
 .main-user-avatar {
   width: 3em;
   margin-left: 32px;
@@ -7,11 +23,31 @@ vaadin-horizontal-layout > h2 {
   margin: 0 0 0 16px;
 }
 
-.main-view-center {
-  width: 100%;
-  padding: 0;
-
+#main-review-holder {
+  overflow: scroll;
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;     /* Firefox */
 }
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+#main-review-holder::-webkit-scrollbar {
+  display: none;
+}
+
+:host([theme~="my-custom-grid"]) {
+  display: block;
+  height: auto;
+}
+
+:host([theme~="my-custom-grid"]) #fixedsizer,
+:host([theme~="my-custom-grid"]) #outerscroller {
+  display: none;
+}
+
+:host([theme~="my-custom-grid"]) #table {
+  overflow: hidden;
+}
+
 
 .main-review-form {
   width: 100%;
@@ -42,7 +78,8 @@ vaadin-horizontal-layout > h2 {
 */
 
 .main-left-column {
-
+  background: left;
+  /*display: block;*/
 }
 
 .main-left-sausage-logo {
