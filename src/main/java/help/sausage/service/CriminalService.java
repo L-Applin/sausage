@@ -1,7 +1,7 @@
 package help.sausage.service;
 
 import help.sausage.dto.CrimInfoDto;
-import help.sausage.exceptions.UnknowneUsernameException;
+import help.sausage.exceptions.UnknownUsernameException;
 import help.sausage.repository.CrimInfoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,7 +17,7 @@ public class CriminalService {
                 .map(CrimInfoDto::fromEntity)
                 .orElseThrow(() -> {
                     final String msg = "Criminal with name '%s' not found".formatted(crimName);
-                    return new UnknowneUsernameException(msg);
+                    return new UnknownUsernameException(msg);
                 });
     }
 }

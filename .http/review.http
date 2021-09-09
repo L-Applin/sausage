@@ -12,7 +12,7 @@ Content-Type: application/json
 
 
 ###
-GET {{host}}/api/review
+GET {{host}}/api/review/699c767d-b858-4c65-9f09-44a9cfaa926b
 
 
 ###
@@ -29,3 +29,14 @@ GET {{host}}/api/criminal/review/bob
 
 ###
 PATCH {{host}}/api/review/595793aa-01bd-44d4-8107-2957097288ad/like
+
+
+###
+PATCH {{host}}/api/review/699c767d-b858-4c65-9f09-44a9cfaa926b
+Content-Type: application/json
+
+{
+  "crims": [ "Applin" ],
+  "text": "update 4",
+  "stars": 4
+}

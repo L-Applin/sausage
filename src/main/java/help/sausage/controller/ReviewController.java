@@ -14,8 +14,8 @@ public interface ReviewController {
 
     ResponseEntity<List<ReviewDto>> getAllReviewsPaginated(int page, int size, String sortBy, String dir);
 
-    String GET_REVIEW_BY_USERNAME_URL = "/{username}";
-    ResponseEntity<List<ReviewDto>> getReviewByUsername(String username);
+    String GET_REVIEW_BY_ID_URL = "/{reviewId}";
+    ResponseEntity<ReviewDto> getReviewById(UUID reviewId);
 
     String SEND_LIKE_URL = "/{reviewId}/like";
     ResponseEntity<Long> sendLike(UUID reviewId);

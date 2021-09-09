@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -38,7 +39,7 @@ public class ReviewEntity {
     @JoinColumn(name = "author_id")
     private AppUserEntity author;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "crims_involved",
             joinColumns = @JoinColumn(name = "review_id"),
@@ -46,7 +47,7 @@ public class ReviewEntity {
     )
     private List<AppUserEntity> crims;
 
-    @OneToMany(mappedBy = "review")
+    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL)
     private List<UnknownCrimEntity> unknownCrims;
 
     @Column(name = "date_created")

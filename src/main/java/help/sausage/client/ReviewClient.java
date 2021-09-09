@@ -86,18 +86,21 @@ public class ReviewClient implements ReviewController {
     }
 
     @Override
-    public ResponseEntity<List<ReviewDto>> getReviewByUsername(String username) {
-        final String url = host + BASE_URL + GET_REVIEW_BY_USERNAME_URL;
-        return frontEndClient.exchange(url,
+    public ResponseEntity<ReviewDto> getReviewById(UUID reviewId) {
+        final String url = host + BASE_URL + GET_REVIEW_BY_ID_URL;
+        Map<String, Object> uriVar = new HashMap<>();
+        uriVar.put("reviewId", reviewId.toString());
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url)
+                .uriVariables(uriVar);
+        return frontEndClient.exchange(
+                builder.toUriString(),
                 HttpMethod.GET,
                 HttpEntity.EMPTY,
-                REVIEW_LIST_RESPONSE_TYPE,
-                username);
+                ReviewDto.class);
     }
 
     @Override
     public ResponseEntity<Long> sendLike(UUID reviewId) {
-        // todo basic auth
         final String templateUrl = host + BASE_URL + SEND_LIKE_URL;
         Map<String, Object> uriVar = new HashMap<>();
         uriVar.put("reviewId", reviewId.toString());

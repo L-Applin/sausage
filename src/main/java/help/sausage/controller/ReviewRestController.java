@@ -50,9 +50,9 @@ public class ReviewRestController implements ReviewController {
     }
 
     @Override
-    @GetMapping(GET_REVIEW_BY_USERNAME_URL)
-    public ResponseEntity<List<ReviewDto>> getReviewByUsername(@PathVariable String username) {
-        List<ReviewDto> reviews = reviewService.getReviewsByAuthorUsername(username);
+    @GetMapping(GET_REVIEW_BY_ID_URL)
+    public ResponseEntity<ReviewDto> getReviewById(@PathVariable("reviewId") UUID reviewId) {
+        ReviewDto reviews = reviewService.getReviewById(reviewId);
         return ResponseEntity.ok(reviews);
     }
 

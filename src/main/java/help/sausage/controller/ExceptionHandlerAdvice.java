@@ -1,10 +1,11 @@
 package help.sausage.controller;
 
 import help.sausage.dto.ErrorDto;
-import help.sausage.exceptions.UnknowneUsernameException;
+import help.sausage.exceptions.UnknownUsernameException;
 import help.sausage.exceptions.UsernameAlreadyExistException;
 import java.util.NoSuchElementException;
 import javax.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSourceResolvable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -17,6 +18,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 @ControllerAdvice
+@Slf4j
 public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
 
     @Override
@@ -41,6 +43,7 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
     @ExceptionHandler(NoSuchElementException.class)
     public ResponseEntity<ErrorDto> handleNoSuchElement(HttpServletRequest req, NoSuchElementException ex) {
         ErrorDto errorDto = new ErrorDto(ex.getMessage(), req.getContextPath());
+        log.error("No value present", ex);
         return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
     }
 
@@ -51,10 +54,17 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(UnknowneUsernameException.class)
-    public ResponseEntity<ErrorDto> handleUnknowneUsername(HttpServletRequest req, UnknowneUsernameException ex) {
+    @ExceptionHandler(UnknownUsernameException.class)
+    public ResponseEntity<ErrorDto> handleUnknowneUsername(HttpServletRequest req, UnknownUsernameException ex) {
         ErrorDto errorDto = new ErrorDto(ex.getMessage(), req.getContextPath());
         return new ResponseEntity<>(errorDto, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorDto> handleException(HttpServletRequest req, Exception ex) {
+        log.error(ex.getMessage(), ex);
+        ErrorDto errorDto = new ErrorDto(ex.getMessage(), req.getContextPath());
+        return new ResponseEntity<>(errorDto, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 }

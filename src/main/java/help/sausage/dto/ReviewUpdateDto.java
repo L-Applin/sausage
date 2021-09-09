@@ -1,8 +1,8 @@
 package help.sausage.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,10 +11,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ReviewUpdateDto {
-    private UUID authorId;
-    private List<String> knownCrims;
-    private List<String> unknownCrim;
+    @JsonProperty
+    private List<String> crims;
+    @JsonProperty
     private LocalDate date;
-    private int stars;
+    @JsonProperty
+    private Integer stars;
+    @JsonProperty
     private String text;
 }

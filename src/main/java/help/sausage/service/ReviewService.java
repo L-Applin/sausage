@@ -22,7 +22,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
-import java.util.stream.Stream;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -88,42 +87,50 @@ public class ReviewService {
 
     @Transactional
     public ReviewDto updateReview(UUID reviewId, ReviewUpdateDto review) {
+        int totalLikes = (int) reviewRepository.countNumberOfLikes(reviewId.toString());
         List<AppUserEntity> knownCrims = new ArrayList<>();
-        List<String> unkownCrims = new ArrayList<>();
-        Stream.concat(review.getKnownCrims().stream(), review.getUnknownCrim().stream())
-            .forEach(username -> appUserRepository
-                        .findByUsername(username)
-                        .ifPresentOrElse(knownCrims::add, () -> unkownCrims.add(username)));
-        ReviewEntity previous = reviewRepository.findById(reviewId)
-                                                .orElseThrow();
+        boolean requiresCrimUpdate = review.getCrims() != null;
+        if (requiresCrimUpdate) {
+            unkownCrimsRepository.deleteAllByIdReviewId(reviewId);
+        }
+        ReviewEntity previous = reviewRepository.findById(reviewId).orElseThrow(
+                () -> new NoSuchElementException("Cannot find review with id '%s'".formatted(reviewId)));
+        if (requiresCrimUpdate) {
+            List<String> unkownCrims = new ArrayList<>();
+            review.getCrims().forEach(username -> appUserRepository.findByUsername(username)
+                    .ifPresentOrElse(knownCrims::add, () -> unkownCrims.add(username)));
 
-        List<UnknownCrimEntity> unknownCrimsEntities = unkownCrims.stream()
-                .map(c -> unkownCrimsRepository.findById(new UnknownCrimId(c, reviewId))
-                            .orElseGet(() -> unkownCrimsRepository.save(newUnknownCrim(c, reviewId))))
-                .toList();
+            List<UnknownCrimEntity> unknownCrimEntities = unkownCrims.stream()
+                    .map(c -> unkownCrimsRepository.findById(new UnknownCrimId(c, reviewId))
+                        .orElseGet(() -> unkownCrimsRepository.save(newUnknownCrim(c, reviewId))))
+                    .toList();
+            previous.setCrims(knownCrims);
+            previous.setUnknownCrims(unknownCrimEntities);
+        }
+        if (review.getStars() != null) {
+            previous.setStars(review.getStars());
+        }
 
-        ReviewEntity reviewToUpdate = new ReviewEntity(
-                reviewId,
-                previous.getAuthor(),
-                knownCrims,
-                unknownCrimsEntities,
-                previous.getDateCreated(),
-                review.getDate(),
-                LocalDateTime.now(),
-                review.getStars(),
-                review.getText());
-        ReviewEntity saved = reviewRepository.save(reviewToUpdate);
-        return withTotalLikes(saved);
+        if (review.getText() != null) {
+            previous.setText(review.getText());
+        }
+
+        if (review.getDate() != null) {
+            previous.setReviewDate(review.getDate());
+        }
+        previous.setUpdated(LocalDateTime.now());
+        return withTotalLikes(previous, totalLikes);
     }
 
     public long addLike(UUID reviewId, String username) {
         UUID userId = appUserRepository.findByUsername(username)
-                .orElseThrow().getUserId();
+                .orElseThrow(() -> new NoSuchElementException("Cannot find user with username '%s'"
+                        .formatted(username)))
+                .getUserId();
         ReviewLikeEntity like = new ReviewLikeEntity(new ReviewLikeId(reviewId, userId));
         reviewLikeRepository.save(like);
         return reviewRepository.countNumberOfLikes(reviewId.toString());
     }
-
 
     public boolean hasLiked(String username, UUID reviewId) {
         return appUserRepository
@@ -132,9 +139,19 @@ public class ReviewService {
                 .isPresent();
     }
 
-    private ReviewDto withTotalLikes(ReviewEntity reviewDto) {
-        long totalLikes = reviewRepository.countNumberOfLikes(reviewDto.getReviewId().toString());
-        return toDto(reviewDto, totalLikes, 0); //todo @Comments
+    private ReviewDto withTotalLikes(ReviewEntity reviewEntity) {
+        final String reviewId = reviewEntity.getReviewId().toString();
+        long totalLikes = reviewRepository.countNumberOfLikes(reviewId);
+        return toDto(reviewEntity, totalLikes, 0); //todo @Comments
     }
 
+    private ReviewDto withTotalLikes(ReviewEntity reviewEntity, int totalLikes) {
+        return toDto(reviewEntity, totalLikes, 0); //todo @Comments
+    }
+
+    public ReviewDto getReviewById(UUID reviewId) {
+        return withTotalLikes(reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new NoSuchElementException("Cannot find review with id '%s'"
+                        .formatted(reviewId.toString()))));
+    }
 }
