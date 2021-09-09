@@ -5,11 +5,7 @@ import com.vaadin.flow.component.Unit;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Span;
-import com.vaadin.flow.component.login.AbstractLogin;
-import com.vaadin.flow.component.login.AbstractLogin.LoginEvent;
 import com.vaadin.flow.component.login.LoginForm;
-import com.vaadin.flow.component.login.LoginI18n.Form;
-import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.BeforeEnterEvent;
@@ -18,10 +14,7 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinSession;
 import help.sausage.client.UserClient;
-import help.sausage.dto.UserDto;
-import help.sausage.ui.data.SessionUser;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 
 @Route("login")
 @PageTitle("Login | Sausage")
@@ -39,19 +32,8 @@ public class LoginView extends VerticalLayout implements BeforeEnterObserver {
         HorizontalLayout createAccount = creatAccountLayout();
         add(icon, login, createAccount);
         login.setAction("login");
-        login.addLoginListener(e -> {
-            Notification.show("User successfully authenticated: " + e.getUsername());
-            ResponseEntity<UserDto> fetchedUserResponse = userClient.getUserByUsername(e.getUsername());
-            if (!fetchedUserResponse.getStatusCode().is2xxSuccessful()
-                    || fetchedUserResponse.getBody() == null) {
-                // error while fetching full user from backend
-                Notification.show("There was an error while trying to retreive user information.");
-            } else {
-                UserDto fetchedUser = fetchedUserResponse.getBody();
-                VaadinSession.getCurrent().setAttribute(SessionUser.class,
-                        new SessionUser(fetchedUser.username(), fetchedUser.id(), fetchedUser.icon()));
-            }
-        });
+        login.addLoginListener(e ->
+            VaadinSession.getCurrent().setAttribute("username", e.getUsername()));
         UI.getCurrent().getPage().executeJs("document.getElementById(\"vaadinLoginUsername\").focus()");
     }
 

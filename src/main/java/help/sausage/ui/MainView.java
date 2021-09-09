@@ -11,7 +11,9 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinSession;
 import help.sausage.client.ReviewClient;
+import help.sausage.client.UserClient;
 import help.sausage.dto.ReviewDto;
+import help.sausage.dto.UserDto;
 import help.sausage.ui.component.LeftColumnComponent;
 import help.sausage.ui.component.ReviewCardComponent;
 import help.sausage.ui.component.ReviewFormComponent;
@@ -32,18 +34,30 @@ public class MainView extends VerticalLayout implements ReviewFormComponent.Revi
 
     private final VerticalLayout reviewHolder = new VerticalLayout();
     private final ReviewClient reviewClient;
-
+    private final UserClient userClient;
     private SessionUser user;
 
     public MainView() {
         this.reviewClient = ApplicationContextProvider.getCtx().getBean(ReviewClient.class);
+        this.userClient = ApplicationContextProvider.getCtx().getBean(UserClient.class);
         setClassName("main-vew");
 
         user = VaadinSession.getCurrent().getAttribute(SessionUser.class);
         if (user == null) {
-            Notification.show("No user logged in");
-            UI.getCurrent().navigate("login");
-            return;
+            String username = (String) VaadinSession.getCurrent().getAttribute("username");
+            ResponseEntity<UserDto> fetchedUserResponse = userClient.getUserByUsername(username);
+            if (!fetchedUserResponse.getStatusCode().is2xxSuccessful()
+                    || fetchedUserResponse.getBody() == null) {
+                // error while fetching full user from backend
+                Notification.show("There was an error while trying to retreive user information.");
+            } else {
+                UserDto fetchedUser = fetchedUserResponse.getBody();
+                final SessionUser sessionUser = new SessionUser(fetchedUser.username(), fetchedUser.id(),
+                        fetchedUser.icon());
+                VaadinSession.getCurrent().setAttribute(SessionUser.class,
+                        sessionUser);
+                user = sessionUser;
+            }
         }
 
         VerticalLayout centerColumn = new VerticalLayout();

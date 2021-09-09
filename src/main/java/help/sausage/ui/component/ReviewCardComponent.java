@@ -6,7 +6,9 @@ import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasStyle;
 import com.vaadin.flow.component.Tag;
+import com.vaadin.flow.component.Unit;
 import com.vaadin.flow.component.dependency.CssImport;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Hr;
@@ -23,6 +25,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.RouteParameters;
 import com.vaadin.flow.router.RouterLink;
 import com.vaadin.flow.server.VaadinSession;
+import com.vaadin.flow.shared.Registration;
 import help.sausage.client.ReviewClient;
 import help.sausage.ui.CrimView;
 import help.sausage.ui.data.Review;
@@ -41,9 +44,15 @@ public class ReviewCardComponent extends VerticalLayout {
     private Review review;
     private ReviewClient reviewClient;
     private SessionUser sessionUser;
+    private HorizontalLayout innerSocial;
 
     private VerticalLayout likesLayout = new VerticalLayout();
     private boolean likedByUser;
+    private VerticalLayout editLayout;
+    private Icon commentsIcon;
+    private Registration editClickReg;
+    private Registration likesRegistration;
+    private Registration commentReg;
 
     public ReviewCardComponent(Review review) {
         this.review = review;
@@ -111,44 +120,69 @@ public class ReviewCardComponent extends VerticalLayout {
         VerticalLayout wrapper = new VerticalLayout();
         wrapper.setId("review-card-social-wrapper");
 
-        HorizontalLayout social = new HorizontalLayout();
-        social.setId("review-card-social");
+        innerSocial = new HorizontalLayout();
+        innerSocial.setId("review-card-social");
 
         likesLayout.setDefaultHorizontalComponentAlignment(Alignment.CENTER);
         likesLayout.setClassName("review-card-social-likes review-card-social-item");
-//        likesLayout.setClassName("review-card-social-item");
         Icon heart = userLikedReview() ? VaadinIcon.HEART.create() : VaadinIcon.HEART_O.create();
         Label likesAmount = new Label("%d".formatted(review.likes()));
         likesLayout.add(heart, likesAmount);
-        heart.addClickListener(this::doLikeReview);
+        likesRegistration = heart.addClickListener(this::doLikeReview);
 
         VerticalLayout commentsLayout = new VerticalLayout();
         commentsLayout.setDefaultHorizontalComponentAlignment(Alignment.CENTER);
         commentsLayout.setClassName("review-card-social-item");
-        Icon commentsIcon = VaadinIcon.COMMENT.create();
+        commentsIcon = VaadinIcon.COMMENT.create();
         Label commentAmount = new Label("%d".formatted(review.comments()));
         commentsLayout.add(commentsIcon, commentAmount);
-        commentsIcon.addClickListener(this::onCommentClicked);
+        commentReg = commentsIcon.addClickListener(this::onCommentClicked);
 
         if (sessionUser != null && review.author().name().equals(sessionUser.username())) {
-            VerticalLayout editLayout = new VerticalLayout();
+            editLayout = new VerticalLayout();
             editLayout.setDefaultHorizontalComponentAlignment(Alignment.CENTER);
             editLayout.setClassName("review-card-social-item");
             Icon editIcon = VaadinIcon.PENCIL.create();
-            editIcon.addClickListener(this::onEditClicked);
+            editClickReg = editIcon.addClickListener(this::onEditClicked);
             editLayout.add(editIcon);
-            social.add(editLayout);
+            innerSocial.add(editLayout);
         }
-        social.add(commentsLayout, likesLayout);
-        wrapper.add(social);
-        wrapper.setHorizontalComponentAlignment(Alignment.END, social);
+        innerSocial.add(commentsLayout, likesLayout);
+        wrapper.add(innerSocial);
+        wrapper.setHorizontalComponentAlignment(Alignment.END, innerSocial);
 
         return wrapper;
     }
 
+    public void removeEditIfExist() {
+        if (editLayout != null) {
+            innerSocial.remove(editLayout);
+        }
+    }
+
+    public void noClicks() {
+        editClickReg.remove();
+        likesRegistration.remove();
+        commentReg.remove();
+    }
+
     private void onEditClicked(ClickEvent<Icon> event) {
-        //todo @Review
-        Notification.show("~~~ TODO: EDIT REVIEW ~~~");
+        VerticalLayout wrapper = new VerticalLayout();
+        wrapper.setDefaultHorizontalComponentAlignment(Alignment.CENTER);
+        ReviewCardComponent reviewCard = new ReviewCardComponent(review);
+        reviewCard.removeEditIfExist();
+        reviewCard.noClicks();
+        Icon closeIcon = VaadinIcon.CLOSE.create();
+        closeIcon.setId("review-card-edit-close-icon");
+        wrapper.setHorizontalComponentAlignment(Alignment.END, closeIcon);
+        Dialog dialog = new Dialog();
+        closeIcon.addClickListener(e -> dialog.close());
+        dialog.add(wrapper);
+        dialog.setCloseOnOutsideClick(false);
+        dialog.open();
+        EditReviewForm editReviewForm = new EditReviewForm(review, dialog);
+        wrapper.add(closeIcon, reviewCard, editReviewForm);
+        dialog.setMaxWidth(30, Unit.VW);
     }
 
     private boolean userLikedReview() {

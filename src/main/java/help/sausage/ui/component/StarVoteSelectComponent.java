@@ -29,21 +29,23 @@ public class StarVoteSelectComponent extends HorizontalLayout {
         zero.setSize("1em");
         zero.getStyle().set("opacity", "0.5");
         zero.getStyle().set("margin-right", "8px");
-        zero.getElement().addEventListener("click", e -> {
-            amount = 0;
-            for (Icon icon : icons) {
-                remove(icon);
-            }
-            for (int i = 0; i < 5; i++) {
-                icons[i] = getIcon(VaadinIcon.STAR_O);
-                icons[i].getStyle().set("opacity", "1");
-            }
-            add(icons);
-            setListeners(icons, true);
-        });
+        zero.getElement().addEventListener("click", e -> reset());
         zero.getElement().addEventListener("mouseenter", e -> zero.getStyle().set("opacity", "0.85"));
         zero.getElement().addEventListener("mouseleave", e -> zero.getStyle().set("opacity", "0.5"));
         add(zero);
+    }
+
+    public void reset() {
+        amount = 0;
+        for (Icon icon : icons) {
+            remove(icon);
+        }
+        for (int i = 0; i < 5; i++) {
+            icons[i] = getIcon(VaadinIcon.STAR_O);
+            icons[i].getStyle().set("opacity", "1");
+        }
+        add(icons);
+        setListeners(icons, true);
     }
 
     private Icon getIcon(VaadinIcon vaadinIcon) {
@@ -56,7 +58,13 @@ public class StarVoteSelectComponent extends HorizontalLayout {
         return amount;
     }
 
-    private void setIcons(int iconsNum) {
+    public void setAmount(int stars) {
+        if (stars >= 0 && stars <= 5) {
+            amount = stars;
+        }
+    }
+
+    public void setIcons(int iconsNum) {
         setIcons(iconsNum, "1", true);
     }
 

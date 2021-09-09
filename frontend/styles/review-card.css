@@ -92,3 +92,18 @@ review-card:hover {
 #review-card-seperator {
   margin: 8px 32px 8px 32px;
 }
+
+
+/* ------------------------------------------------------ */
+/*     Edit review Dialog     */
+
+#review-card-edit-dialog {
+  border-radius: 2em;
+  background-color: red;
+}
+
+#review-card-edit-close-icon {
+  margin: 0;
+  padding: 0;
+  opacity: 60%;
+}

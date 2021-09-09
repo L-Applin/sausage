@@ -20,7 +20,7 @@ GET {{host}}/api/review?page=0&size=10
 
 
 ###
-GET {{host}}/api/review/alice
+GET {{host}}/api/review/Applin
 
 
 ###

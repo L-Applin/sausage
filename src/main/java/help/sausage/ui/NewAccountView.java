@@ -56,7 +56,6 @@ public class NewAccountView extends VerticalLayout {
     Binder<NewUserDto> binder = new Binder<>();
     private Label status = new Label();
 
-
     public NewAccountView(@Autowired UserClient userClient,
             @Autowired PasswordEncoder passwordEncoder,
             @Autowired ResponseWrapper responseWrapper) {

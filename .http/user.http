@@ -8,7 +8,7 @@ Content-Type: application/json
 
 
 ###
-GET {{host}}/api/user/Alice
+GET {{host}}/api/user/Applin
 
 
 ###

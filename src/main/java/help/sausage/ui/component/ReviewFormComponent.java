@@ -1,116 +1,49 @@
 package help.sausage.ui.component;
 
-import com.vaadin.flow.component.ClickEvent;
-import com.vaadin.flow.component.Key;
-import com.vaadin.flow.component.Unit;
-import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.notification.Notification;
-import com.vaadin.flow.component.orderedlayout.FlexLayout;
-import com.vaadin.flow.component.orderedlayout.FlexLayout.FlexWrap;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.textfield.TextArea;
-import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.server.VaadinSession;
 import help.sausage.client.ReviewClient;
 import help.sausage.dto.NewReviewDto;
 import help.sausage.dto.ReviewDto;
 import help.sausage.ui.data.SessionUser;
 import help.sausage.utils.ApplicationContextProvider;
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 
 @CssImport(value="./styles/review-text-field.css", themeFor="vaadin-text-area")
 @Slf4j
-public class ReviewFormComponent extends VerticalLayout {
+public class ReviewFormComponent extends ReviewForm<NewReviewDto> {
 
-    public interface ReviewCreatedListener {
-        void onNewReview(ReviewDto reviewDto);
-    }
 
-    private final FlexLayout crimBoxHolder = new FlexLayout();
-    private final TextArea reviewArea = new TextArea(null, "Did you have a good kidnapping experience?");
-    private final DatePicker datePicker = new DatePicker(LocalDate.now());
-    private final StarVoteSelectComponent stars = new StarVoteSelectComponent();
-
-    private final ReviewClient reviewClient;
-
-    private List<ReviewCreatedListener> reviewCreatedListeners = new ArrayList<>();
-
-    public void addOnReviewCreatedListener(ReviewCreatedListener listener) {
-        if (listener != null) {
-            reviewCreatedListeners.add(listener);
-        }
-    }
+    protected final ReviewClient reviewClient;
 
     public ReviewFormComponent() {
         this.reviewClient = ApplicationContextProvider.getCtx().getBean(ReviewClient.class);
-        // Create UI components
-        reviewArea.setMaxLength(255);
-        setFlexGrow(1, reviewArea);
-        reviewArea.setClassName("main-review-from-descr");
-        datePicker.setWidth(9, Unit.EM);
-        TextField crimsField = new TextField(null, "Who kidnapped you?");
-        crimBoxHolder.setFlexWrap(FlexWrap.WRAP);
-        crimBoxHolder.getStyle().set("margin", "0px");
-        crimsField.addKeyDownListener(Key.ENTER, e -> {
-            if (!crimsField.isEmpty()) {
-                String crimName = crimsField.getValue();
-                crimBoxHolder.add(createCrimBox(crimName, crimBoxHolder));
-                crimsField.clear();
-            }
-        });
-
-        Button createButton = new Button("Review");
-        createButton.setWidth("100%");
-        createButton.addClickListener(this::submitNewReview);
-        HorizontalLayout formLayout = new HorizontalLayout(datePicker, crimsField, stars, createButton);
-        formLayout.setVerticalComponentAlignment(Alignment.CENTER, stars);
-        formLayout.setFlexGrow( 2, createButton);
-        formLayout.setPadding(false);
-        formLayout.setMargin(false);
-        formLayout.setJustifyContentMode(JustifyContentMode.BETWEEN);
-        formLayout.getStyle().set("margin", "0px");
-        formLayout.setWidth("100%");
-
-        getStyle().set("padding", "0px");
-
-        setHorizontalComponentAlignment(Alignment.CENTER, formLayout, reviewArea);
-        setMargin(false);
-
-        add(reviewArea, crimBoxHolder, formLayout);
     }
 
-    private void submitNewReview(ClickEvent<Button> event) {
+    @Override
+    NewReviewDto getData() {
         SessionUser user = VaadinSession.getCurrent().getAttribute(SessionUser.class);
         List<String> crimNames = crimBoxHolder.getChildren()
                 .map(el -> ((KnownCrimBtnComponent) el).getCrimName()).toList();
-        final NewReviewDto newReview = new NewReviewDto(
+        return new NewReviewDto(
                 user.uuid(),
                 crimNames,
                 datePicker.getValue(),
-                stars.getAmount(),
+                starsVoteComponent.getAmount(),
                 reviewArea.getValue());
-        ResponseEntity<ReviewDto> response = reviewClient.createNewReview(newReview);
+    }
+
+    @Override
+    void submitNewReview(NewReviewDto data) {
+        ResponseEntity<ReviewDto> response = reviewClient.createNewReview(data);
         if (!response.getStatusCode().is2xxSuccessful() || response.getBody() == null) {
-            Notification.show("error creating new review: %s".formatted(newReview.toString()));
+            Notification.show("error creating new review: %s".formatted(data.toString()));
             log.error(response.toString());
         } else {
             reviewCreatedListeners.forEach(l -> l.onNewReview(response.getBody()));
         }
     }
-
-    private KnownCrimBtnComponent createCrimBox(String crimName, FlexLayout crimBoxHolder) {
-        KnownCrimBtnComponent cmp = new KnownCrimBtnComponent(crimName);
-        cmp.setOnClose(e -> crimBoxHolder.remove(cmp));
-        return cmp;
-    }
-
-
-
 }
