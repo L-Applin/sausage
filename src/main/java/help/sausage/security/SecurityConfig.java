@@ -28,7 +28,6 @@ public class SecurityConfig {
     private static final String LOGIN_URL = "/login";
     private static final String LOGOUT_SUCCESS_URL = "/login";
 
-
     @Order(1)
     @Configuration
     public static class RestSecurityConfigurationAdapter extends WebSecurityConfigurerAdapter {
@@ -41,7 +40,6 @@ public class SecurityConfig {
                     .antMatcher("/api/**")
                     .authorizeRequests()
                     .anyRequest().authenticated()
-
 //                    .antMatchers(PATCH,
 //                            "/api/review/*",
 //                            "/api/review/*/like")

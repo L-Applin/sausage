@@ -19,9 +19,11 @@ Crim page
  - # of incident
 
 review date
- : 5 minutes agoe
- : yesterday
- : 3 months ago
+ - 5 minutes ago
+ - yesterday
+ - 3 months ago
 
 
 - no review date in the future
+
+- use theme / cas variables

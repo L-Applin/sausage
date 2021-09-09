@@ -1,6 +1,5 @@
 package help.sausage.ui;
 
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.Unit;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Image;
@@ -20,6 +19,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 @PageTitle("Login | Sausage")
 public class LoginView extends VerticalLayout implements BeforeEnterObserver {
 
+    private static final String FOCUS_ON_LOGIN_USERNAME =
+        """
+            let login = document.getElementById("vaadinLoginUsername");
+            if (login != null) {
+              login.focus();
+            }
+        """;
     private LoginForm login = new LoginForm();
 
     public LoginView(@Autowired UserClient userClient) {
@@ -32,9 +38,9 @@ public class LoginView extends VerticalLayout implements BeforeEnterObserver {
         HorizontalLayout createAccount = creatAccountLayout();
         add(icon, login, createAccount);
         login.setAction("login");
-        login.addLoginListener(e ->
-            VaadinSession.getCurrent().setAttribute("username", e.getUsername()));
-        UI.getCurrent().getPage().executeJs("document.getElementById(\"vaadinLoginUsername\").focus()");
+        login.addLoginListener(e -> VaadinSession.getCurrent().setAttribute("username", e.getUsername()));
+//        UI.getCurrent().getPage().executeJs(FOCUS_ON_LOGIN_USERNAME);
+
     }
 
     private HorizontalLayout creatAccountLayout() {

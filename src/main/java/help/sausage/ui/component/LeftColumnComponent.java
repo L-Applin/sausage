@@ -1,5 +1,6 @@
 package help.sausage.ui.component;
 
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H2;
@@ -22,10 +23,14 @@ public class LeftColumnComponent extends VerticalLayout {
         Image logo = new Image("images/sausage-icon.png", "Sausage logo");
         SearchBoxComponent searchBox = new SearchBoxComponent(Notification::show);
 
+        final Anchor logoutAnchor = new Anchor("", "Logout");
+//        logoutAnchor.removeHref();
+        H2 logout = new H2(logoutAnchor);
+        logout.addClickListener(e -> UI.getCurrent().getPage().setLocation("/logout"));
         List<H2> menuItems = List.of(
                 new H2(new Anchor("/", "Home")),
                 new H2(new Anchor("profile/"+ user.username(), "Profile")),
-                new H2(new Anchor("logout", "Logout")));
+                logout);
 
         setClassName("main-left-column");
         setDefaultHorizontalComponentAlignment(Alignment.END);
@@ -43,6 +48,7 @@ public class LeftColumnComponent extends VerticalLayout {
             menu.add(item);
             menu.setClassName("main-left-menu-item");
         });
+
 
         add(logo, title, descr, searchBox, menu);
     }

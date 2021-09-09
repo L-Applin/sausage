@@ -3,5 +3,9 @@
 }
 
 #review-holder-load-btn {
-  margin: 1em;
+  border-radius: 2em;
+  height: 100%;
+  width: 90%;
+  margin: 3em 0;
+  padding: 1em;
 }

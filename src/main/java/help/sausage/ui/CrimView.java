@@ -1,13 +1,10 @@
 package help.sausage.ui;
 
 import com.vaadin.flow.component.dependency.CssImport;
-import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.grid.Grid.SelectionMode;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.data.provider.DataProvider;
-import com.vaadin.flow.data.renderer.ComponentRenderer;
+import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.HasDynamicTitle;
@@ -18,10 +15,11 @@ import help.sausage.dto.ErrorDto;
 import help.sausage.dto.ReviewDto;
 import help.sausage.ui.component.CrimInfoComponent;
 import help.sausage.ui.component.LeftColumnComponent;
-import help.sausage.ui.component.ReviewCardComponent;
+import help.sausage.ui.component.ReviewHolderComponent;
 import help.sausage.ui.component.RightColumnComponent;
 import help.sausage.ui.data.Review;
 import help.sausage.utils.ApplicationContextProvider;
+import help.sausage.utils.Null;
 import help.sausage.utils.ResponseWrapper;
 import java.util.List;
 import java.util.stream.Stream;
@@ -38,6 +36,7 @@ public class CrimView extends VerticalLayout
             ApplicationContextProvider.getCtx().getBean(CriminalClient.class);
     private final ResponseWrapper wrapper =
             ApplicationContextProvider.getCtx().getBean(ResponseWrapper.class);
+    private ReviewHolderComponent reviewHolder;
 
     @Override
     public String getPageTitle() {
@@ -63,17 +62,10 @@ public class CrimView extends VerticalLayout
         CrimInfoComponent crimInfoComponent = new CrimInfoComponent(crimInfo);
         center.add(crimInfoComponent);
 
-        DataProvider<Review, Void> reviewProvider = crimReviewProvider(crimInfo);
-        Grid<Review> crimReviewsGrid = new Grid<>();
-        crimReviewsGrid.setId("crim-view-grid");
-        crimReviewsGrid.setDataProvider(reviewProvider);
-        crimReviewsGrid.addColumn(new ComponentRenderer<>(ReviewCardComponent::new));
-        crimReviewsGrid.setDetailsVisibleOnClick(false);
-        crimReviewsGrid.setHeightByRows(true);
-        crimReviewsGrid.setSelectionMode(SelectionMode.NONE);
+        this.reviewHolder = new ReviewHolderComponent(this::queryReview);
 
-        center.add(crimReviewsGrid);
-        center.setHorizontalComponentAlignment(Alignment.CENTER, crimReviewsGrid);
+        center.add(reviewHolder);
+        center.setHorizontalComponentAlignment(Alignment.CENTER, reviewHolder);
 
         wrapper.add(leftColumn, center, rightColumn);
         wrapper.expand();
@@ -86,17 +78,10 @@ public class CrimView extends VerticalLayout
         Notification.show("Error while trying to get criminal informations: %s".formatted(errorDto.getMsg()));
     }
 
-    private DataProvider<Review, Void> crimReviewProvider(CrimInfoDto crimInfo) {
-        long maxReviews = crimInfo.total();
-        return DataProvider.fromCallbacks(query -> {
-            log.info("Request from DeataProvider {}:{}", query.getOffset(), query.getLimit());
-                    List<ReviewDto> body = criminalClient
-                            .getReviewForCrim(crimInfo.username(), query.getOffset(), query.getLimit())
-                            .getBody();
-                    return body == null
-                            ? Stream.empty()
-                            : body.stream().map(Review::fromDto);
-                },
-                query -> (int) maxReviews);
+    public Stream<Review> queryReview(Query<Review, Void> query) {
+        return Null.<List<ReviewDto>>orElse(criminalClient.getReviewForCrim(crimName, query.getOffset(), query.getLimit())
+                .getBody(), List.of())
+                    .stream().map(Review::fromDto); // todo @Error how to handle backend error here ???
     }
+
 }
