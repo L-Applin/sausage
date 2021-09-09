@@ -2,6 +2,7 @@ package help.sausage.ui.component;
 
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.provider.Query;
@@ -14,6 +15,7 @@ import java.util.stream.Stream;
 import lombok.Getter;
 import lombok.Setter;
 
+@CssImport("./styles/review-holder.css")
 public class ReviewHolderComponent extends VerticalLayout {
 
     private static final int DEFAULT_SIZE = 3;
@@ -40,6 +42,7 @@ public class ReviewHolderComponent extends VerticalLayout {
 
         loadMoreBtn.setText("more reviews");
         loadMoreBtn.addClickListener(this::loadMore);
+        loadMoreBtn.setId("review-holder-load-btn");
 
         loadReviews();
     }

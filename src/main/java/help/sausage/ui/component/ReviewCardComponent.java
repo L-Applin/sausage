@@ -176,6 +176,7 @@ public class ReviewCardComponent extends VerticalLayout {
         closeIcon.setId("review-card-edit-close-icon");
         wrapper.setHorizontalComponentAlignment(Alignment.END, closeIcon);
         Dialog dialog = new Dialog();
+        dialog.setId("review-card-edit-dialog");
         closeIcon.addClickListener(e -> dialog.close());
         dialog.add(wrapper);
         dialog.setCloseOnOutsideClick(false);

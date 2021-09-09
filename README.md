@@ -12,4 +12,4 @@
 - SprinBoot
     - Spring data
     - Spring security 5
-- Vaadin
+- Vaadin Flow 22

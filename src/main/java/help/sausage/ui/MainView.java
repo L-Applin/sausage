@@ -8,7 +8,6 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinSession;
-import help.sausage.client.ReviewClient;
 import help.sausage.client.UserClient;
 import help.sausage.dto.ReviewDto;
 import help.sausage.dto.UserDto;
@@ -27,15 +26,12 @@ import org.springframework.http.ResponseEntity;
 @CssImport("./styles/main-view.css")
 @PageTitle("Home | Sausage")
 public class MainView extends VerticalLayout implements ReviewFormComponent.ReviewCreatedListener {
-    private static final long serialVersionUID = 42L;
 
     private final VerticalLayout reviewHolder = new ReviewHolderComponent();
-    private final ReviewClient reviewClient;
     private final UserClient userClient;
     private SessionUser user;
 
     public MainView() {
-        this.reviewClient = ApplicationContextProvider.getCtx().getBean(ReviewClient.class);
         this.userClient = ApplicationContextProvider.getCtx().getBean(UserClient.class);
         setClassName("main-vew");
 
@@ -70,14 +66,6 @@ public class MainView extends VerticalLayout implements ReviewFormComponent.Revi
         ReviewFormComponent reviewForm = new ReviewFormComponent();
         reviewForm.addOnReviewCreatedListener(this);
         reviewForm.setClassName("main-review-form");
-
-//        ResponseEntity<List<ReviewDto>> resp = reviewClient.getAllReviewsPaginated();
-//        if (!resp.getStatusCode().is2xxSuccessful() || resp.getBody() == null) {
-//            Notification.show("Error while retrieving reviews: " + resp.toString());
-//        } else {
-//            resp.getBody().forEach(
-//                    review -> reviewHolder.add(new ReviewCardComponent(fromDto(review))));
-//        }
 
         centerColumn.add(reviewForm, reviewHolder);
         VerticalLayout left = new LeftColumnComponent();

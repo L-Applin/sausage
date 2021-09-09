@@ -75,8 +75,8 @@ public class SecurityConfig {
         @Override
         protected void configure(HttpSecurity http) throws Exception {
             http.cors().and().csrf().disable()
-                        .requestCache().requestCache(new CustomRequestCache())
-                    .and()
+//                        .requestCache().requestCache(new CustomRequestCache())
+//                    .and()
                         .authorizeRequests()
                         .requestMatchers(SecurityUtils::isFrameworkInternalRequest).permitAll()
                         .anyRequest().authenticated()
