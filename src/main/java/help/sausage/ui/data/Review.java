@@ -17,7 +17,7 @@ public record Review (
     String text,
     long likes,
     long comments
-    ) {
+    ) implements Comparable<Review>{
 
     public static Review fromDto(ReviewDto review) {
         return new Review(
@@ -37,4 +37,9 @@ public record Review (
 
     public static record Crim(String name, boolean isKnown) {}
     public static record Author(String name, String icon) {}
+
+    @Override
+    public int compareTo(Review o) {
+        return 0;
+    }
 }

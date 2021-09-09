@@ -57,7 +57,7 @@ public class ReviewRestController implements ReviewController {
     }
 
     @Override
-    @PatchMapping(SEND_LIKE_URL)
+    @PatchMapping(PATCH_SEND_LIKE_URL)
     public ResponseEntity<Long> sendLike(@PathVariable("reviewId") UUID reviewId) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth == null) {
@@ -81,6 +81,12 @@ public class ReviewRestController implements ReviewController {
             @RequestBody ReviewUpdateDto review) {
         ReviewDto updatedReview = reviewService.updateReview(reviewId, review);
         return ResponseEntity.ok(updatedReview);
+    }
+
+    @Override
+    @GetMapping(GET_TOTAL_REVIEW_COUNT_URL)
+    public ResponseEntity<Long> getTotalReviewCount() {
+        return ResponseEntity.ok(reviewService.countTotalReview());
     }
 
     private String getLoggedUserName() {

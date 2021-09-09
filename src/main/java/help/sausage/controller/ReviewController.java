@@ -17,7 +17,7 @@ public interface ReviewController {
     String GET_REVIEW_BY_ID_URL = "/{reviewId}";
     ResponseEntity<ReviewDto> getReviewById(UUID reviewId);
 
-    String SEND_LIKE_URL = "/{reviewId}/like";
+    String PATCH_SEND_LIKE_URL = "/{reviewId}/like";
     ResponseEntity<Long> sendLike(UUID reviewId);
 
     String HAS_LIKED_REVIEWD_URL = "/user/{reviewId}/like";
@@ -27,4 +27,6 @@ public interface ReviewController {
     String PATCH_REVIEW_URL = "/{reviewId}";
     ResponseEntity<ReviewDto> updateReview(UUID reviewId, ReviewUpdateDto review);
 
+    String GET_TOTAL_REVIEW_COUNT_URL = "/count";
+    ResponseEntity<Long> getTotalReviewCount();
 }

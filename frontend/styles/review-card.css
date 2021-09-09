@@ -78,13 +78,13 @@ review-card:hover {
 }
 
 
-.review-card-social-item > iron-icon {
+.review-card-social-item > vaadin-icon {
   padding: 0;
   margin: 0;
   opacity: 60%;
 }
 
-.review-card-social-likes > iron-icon {
+.review-card-social-likes > vaadin-icon {
   color: #EE7777;
 }
 

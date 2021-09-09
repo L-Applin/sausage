@@ -1,7 +1,5 @@
 package help.sausage.ui;
 
-import static help.sausage.ui.data.Review.fromDto;
-
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.notification.Notification;
@@ -15,12 +13,11 @@ import help.sausage.client.UserClient;
 import help.sausage.dto.ReviewDto;
 import help.sausage.dto.UserDto;
 import help.sausage.ui.component.LeftColumnComponent;
-import help.sausage.ui.component.ReviewCardComponent;
 import help.sausage.ui.component.ReviewFormComponent;
+import help.sausage.ui.component.ReviewHolderComponent;
 import help.sausage.ui.component.RightColumnComponent;
 import help.sausage.ui.data.SessionUser;
 import help.sausage.utils.ApplicationContextProvider;
-import java.util.List;
 import org.springframework.http.ResponseEntity;
 
 /*
@@ -32,7 +29,7 @@ import org.springframework.http.ResponseEntity;
 public class MainView extends VerticalLayout implements ReviewFormComponent.ReviewCreatedListener {
     private static final long serialVersionUID = 42L;
 
-    private final VerticalLayout reviewHolder = new VerticalLayout();
+    private final VerticalLayout reviewHolder = new ReviewHolderComponent();
     private final ReviewClient reviewClient;
     private final UserClient userClient;
     private SessionUser user;
@@ -45,18 +42,25 @@ public class MainView extends VerticalLayout implements ReviewFormComponent.Revi
         user = VaadinSession.getCurrent().getAttribute(SessionUser.class);
         if (user == null) {
             String username = (String) VaadinSession.getCurrent().getAttribute("username");
-            ResponseEntity<UserDto> fetchedUserResponse = userClient.getUserByUsername(username);
-            if (!fetchedUserResponse.getStatusCode().is2xxSuccessful()
-                    || fetchedUserResponse.getBody() == null) {
-                // error while fetching full user from backend
-                Notification.show("There was an error while trying to retreive user information.");
+            if (username != null) {
+                ResponseEntity<UserDto> fetchedUserResponse = userClient
+                        .getUserByUsername(username);
+                if (!fetchedUserResponse.getStatusCode().is2xxSuccessful()
+                        || fetchedUserResponse.getBody() == null) {
+                    // error while fetching full user from backend
+                    Notification
+                            .show("There was an error while trying to retreive user information.");
+                } else {
+                    UserDto fetchedUser = fetchedUserResponse.getBody();
+                    final SessionUser sessionUser = new SessionUser(fetchedUser.username(),
+                            fetchedUser.id(),
+                            fetchedUser.icon());
+                    VaadinSession.getCurrent().setAttribute(SessionUser.class,
+                            sessionUser);
+                    user = sessionUser;
+                }
             } else {
-                UserDto fetchedUser = fetchedUserResponse.getBody();
-                final SessionUser sessionUser = new SessionUser(fetchedUser.username(), fetchedUser.id(),
-                        fetchedUser.icon());
-                VaadinSession.getCurrent().setAttribute(SessionUser.class,
-                        sessionUser);
-                user = sessionUser;
+                UI.getCurrent().navigate(LoginView.class);
             }
         }
 
@@ -66,16 +70,14 @@ public class MainView extends VerticalLayout implements ReviewFormComponent.Revi
         ReviewFormComponent reviewForm = new ReviewFormComponent();
         reviewForm.addOnReviewCreatedListener(this);
         reviewForm.setClassName("main-review-form");
-        reviewHolder.setPadding(false);
-        reviewHolder.setId("main-review-holder");
 
-        ResponseEntity<List<ReviewDto>> resp = reviewClient.getAllReviewsPaginated();
-        if (!resp.getStatusCode().is2xxSuccessful() || resp.getBody() == null) {
-            Notification.show("Error while retrieving reviews: " + resp.toString());
-        } else {
-            resp.getBody().forEach(
-                    review -> reviewHolder.add(new ReviewCardComponent(fromDto(review))));
-        }
+//        ResponseEntity<List<ReviewDto>> resp = reviewClient.getAllReviewsPaginated();
+//        if (!resp.getStatusCode().is2xxSuccessful() || resp.getBody() == null) {
+//            Notification.show("Error while retrieving reviews: " + resp.toString());
+//        } else {
+//            resp.getBody().forEach(
+//                    review -> reviewHolder.add(new ReviewCardComponent(fromDto(review))));
+//        }
 
         centerColumn.add(reviewForm, reviewHolder);
         VerticalLayout left = new LeftColumnComponent();

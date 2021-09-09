@@ -154,4 +154,8 @@ public class ReviewService {
                 .orElseThrow(() -> new NoSuchElementException("Cannot find review with id '%s'"
                         .formatted(reviewId.toString()))));
     }
+
+    public long countTotalReview() {
+        return reviewRepository.count();
+    }
 }

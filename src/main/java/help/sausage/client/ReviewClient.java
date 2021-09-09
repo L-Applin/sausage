@@ -71,12 +71,11 @@ public class ReviewClient implements ReviewController {
     }
 
     public ResponseEntity<List<ReviewDto>> getAllReviewsPaginated(
-            int page, int size, String sortBy) {
+            int page, int size) {
         final String url = host + BASE_URL;
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url)
                 .queryParam("page", page)
-                .queryParam("size", size)
-                .queryParam("sortBy", sortBy);
+                .queryParam("size", size);
 
         return frontEndClient.exchange(
                 builder.toUriString(),
@@ -101,7 +100,7 @@ public class ReviewClient implements ReviewController {
 
     @Override
     public ResponseEntity<Long> sendLike(UUID reviewId) {
-        final String templateUrl = host + BASE_URL + SEND_LIKE_URL;
+        final String templateUrl = host + BASE_URL + PATCH_SEND_LIKE_URL;
         Map<String, Object> uriVar = new HashMap<>();
         uriVar.put("reviewId", reviewId.toString());
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(templateUrl)
@@ -137,5 +136,11 @@ public class ReviewClient implements ReviewController {
                 HttpMethod.PATCH,
                 body,
                 ReviewDto.class);
+    }
+
+    @Override
+    public ResponseEntity<Long> getTotalReviewCount() {
+        final String url = host + BASE_URL + GET_TOTAL_REVIEW_COUNT_URL;
+        return frontEndClient.getForEntity(url, Long.class);
     }
 }
