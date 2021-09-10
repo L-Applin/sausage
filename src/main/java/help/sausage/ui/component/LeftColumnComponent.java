@@ -1,16 +1,19 @@
 package help.sausage.ui.component;
 
+import static help.sausage.ui.SearchView.FULL_TEXT_QUERY_PARAM;
+
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Label;
-import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.server.VaadinSession;
 import help.sausage.ui.data.SessionUser;
 import java.util.List;
+import java.util.Map;
 
 public class LeftColumnComponent extends VerticalLayout {
 
@@ -21,10 +24,12 @@ public class LeftColumnComponent extends VerticalLayout {
 
     private void loggedIn(SessionUser user) {
         Image logo = new Image("images/sausage-icon.png", "Sausage logo");
-        SearchBoxComponent searchBox = new SearchBoxComponent(Notification::show);
+        SearchBoxComponent searchBox = new SearchBoxComponent(str -> {
+            QueryParameters queryParameters = QueryParameters.simple(Map.of(FULL_TEXT_QUERY_PARAM, str));
+            UI.getCurrent().navigate("search", queryParameters);
+        });
 
         final Anchor logoutAnchor = new Anchor("", "Logout");
-//        logoutAnchor.removeHref();
         H2 logout = new H2(logoutAnchor);
         logout.addClickListener(e -> UI.getCurrent().getPage().setLocation("/logout"));
         List<H2> menuItems = List.of(
@@ -48,7 +53,6 @@ public class LeftColumnComponent extends VerticalLayout {
             menu.add(item);
             menu.setClassName("main-left-menu-item");
         });
-
 
         add(logo, title, descr, searchBox, menu);
     }

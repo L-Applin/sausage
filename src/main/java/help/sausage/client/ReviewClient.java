@@ -4,10 +4,12 @@ import help.sausage.controller.ReviewController;
 import help.sausage.dto.NewReviewDto;
 import help.sausage.dto.ReviewDto;
 import help.sausage.dto.ReviewUpdateDto;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -142,5 +144,23 @@ public class ReviewClient implements ReviewController {
     public ResponseEntity<Long> getTotalReviewCount() {
         final String url = host + BASE_URL + GET_TOTAL_REVIEW_COUNT_URL;
         return frontEndClient.getForEntity(url, Long.class);
+    }
+
+    @Override
+    public ResponseEntity<List<ReviewDto>> searchReview(Optional<String> fullText,
+            List<String> searchTerms, Optional<LocalDate> startDate, Optional<LocalDate> endDate) {
+        final String url = host + BASE_URL + GET_SEARCH;
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url);
+        fullText.ifPresent(str -> builder.queryParam("t", str));
+        if (!searchTerms.isEmpty()) {
+            builder.queryParam("in", searchTerms);
+        }
+        startDate.ifPresent(d -> builder.queryParam("startDate", startDate));
+        endDate.ifPresent(d -> builder.queryParam("endDate", endDate));
+        return frontEndClient.exchange(
+                builder.toUriString(),
+                HttpMethod.GET,
+                HttpEntity.EMPTY,
+                REVIEW_LIST_RESPONSE_TYPE);
     }
 }

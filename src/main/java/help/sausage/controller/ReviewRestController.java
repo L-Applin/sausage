@@ -1,10 +1,14 @@
 package help.sausage.controller;
 
+import static help.sausage.utils.NotYetImplemented.notYetImplemented;
+
 import help.sausage.dto.NewReviewDto;
 import help.sausage.dto.ReviewDto;
 import help.sausage.dto.ReviewUpdateDto;
 import help.sausage.service.ReviewService;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -87,6 +91,16 @@ public class ReviewRestController implements ReviewController {
     @GetMapping(GET_TOTAL_REVIEW_COUNT_URL)
     public ResponseEntity<Long> getTotalReviewCount() {
         return ResponseEntity.ok(reviewService.countTotalReview());
+    }
+
+    @Override
+    public ResponseEntity<List<ReviewDto>> searchReview(
+            @RequestParam Optional<String> fullText,
+            @RequestParam List<String> searchTerms,
+            @RequestParam Optional<LocalDate> startDate,
+            @RequestParam Optional<LocalDate> endDate) {
+        //todo Search
+        return notYetImplemented("todo: search back-end");
     }
 
     private String getLoggedUserName() {

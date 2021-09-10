@@ -5,7 +5,8 @@ create table if not exists app_users (
     user_id     varchar(255) not null unique default (uuid()),
     username    varchar(255) not null unique,
     icon        varchar(255) not null default 'cat',
-    date_joined timestamp not null default now()
+    date_joined timestamp not null default now(),
+    FULLTEXT (username)
 
 ) ;
 
@@ -23,6 +24,7 @@ create table if not exists reviews (
     date_updated    timestamp null default null,
     stars           smallint not null default 0,
     text            varchar(512) not null default '',
+    FULLTEXT (text),
 
     constraint foreign key review_author_id_fk(author_id) references app_users(user_id) on delete cascade
 ) ;
