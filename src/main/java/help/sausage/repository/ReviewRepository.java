@@ -7,9 +7,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.repository.query.Param;
 
-public interface ReviewRepository extends JpaRepository<ReviewEntity, UUID> {
+public interface ReviewRepository
+        extends JpaRepository<ReviewEntity, UUID>, QuerydslPredicateExecutor<ReviewEntity> {
     List<ReviewEntity> findAllByAuthorUsername(String username, Sort sort);
 
     @Query(nativeQuery = true,

@@ -1,7 +1,5 @@
 package help.sausage.controller;
 
-import static help.sausage.utils.NotYetImplemented.notYetImplemented;
-
 import help.sausage.dto.NewReviewDto;
 import help.sausage.dto.ReviewDto;
 import help.sausage.dto.ReviewUpdateDto;
@@ -98,9 +96,15 @@ public class ReviewRestController implements ReviewController {
             @RequestParam Optional<String> fullText,
             @RequestParam List<String> searchTerms,
             @RequestParam Optional<LocalDate> startDate,
-            @RequestParam Optional<LocalDate> endDate) {
-        //todo Search
-        return notYetImplemented("todo: search back-end");
+            @RequestParam Optional<LocalDate> endDate,
+            @RequestParam(defaultValue = "0", required = false) int page,
+            @RequestParam(defaultValue = "10", required = false) int size,
+            @RequestParam(defaultValue = "dateCreated", required = false) String sortBy,
+            @RequestParam(defaultValue = "desc", required = false) String dir)
+    {
+        final List<ReviewDto> body = reviewService
+                .searchReviews(fullText, searchTerms, startDate, endDate, page, size, sortBy, dir);
+        return ResponseEntity.ok(body);
     }
 
     private String getLoggedUserName() {

@@ -46,12 +46,7 @@ public class ReviewClient implements ReviewController {
     public ResponseEntity<List<ReviewDto>> getAllReviewsPaginated(
             int page, int size, String sortBy, String dir) {
         final String url = host + BASE_URL;
-        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url)
-                .queryParam("page", page)
-                .queryParam("size", size)
-                .queryParam("sortBy", sortBy)
-                .queryParam("dir", dir);
-
+        UriComponentsBuilder builder = builderWithPageParam(url, page, size, sortBy, dir);
         return frontEndClient.exchange(
                 builder.toUriString(),
                 HttpMethod.GET,
@@ -148,19 +143,50 @@ public class ReviewClient implements ReviewController {
 
     @Override
     public ResponseEntity<List<ReviewDto>> searchReview(Optional<String> fullText,
-            List<String> searchTerms, Optional<LocalDate> startDate, Optional<LocalDate> endDate) {
+            List<String> searchTerms, Optional<LocalDate> startDate, Optional<LocalDate> endDate,
+            int page, int size, String sortBy, String dir) {
         final String url = host + BASE_URL + GET_SEARCH;
-        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url);
-        fullText.ifPresent(str -> builder.queryParam("t", str));
-        if (!searchTerms.isEmpty()) {
-            builder.queryParam("in", searchTerms);
-        }
-        startDate.ifPresent(d -> builder.queryParam("startDate", startDate));
-        endDate.ifPresent(d -> builder.queryParam("endDate", endDate));
+        UriComponentsBuilder builder = builderWithPageParam(url, page, size, sortBy, dir);
+        setupSearchParam(builder, fullText, searchTerms, startDate, endDate);
         return frontEndClient.exchange(
                 builder.toUriString(),
                 HttpMethod.GET,
                 HttpEntity.EMPTY,
                 REVIEW_LIST_RESPONSE_TYPE);
     }
+
+    public ResponseEntity<List<ReviewDto>> searchReview(Optional<String> fullText,
+            List<String> searchTerms, Optional<LocalDate> startDate, Optional<LocalDate> endDate,
+            int page, int size) {
+        final String url = host + BASE_URL + GET_SEARCH;
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url)
+                .queryParam("page", page)
+                .queryParam("size", size);
+        setupSearchParam(builder, fullText, searchTerms, startDate, endDate);
+        return frontEndClient.exchange(
+                builder.toUriString(),
+                HttpMethod.GET,
+                HttpEntity.EMPTY,
+                REVIEW_LIST_RESPONSE_TYPE);
+
+    }
+
+    private void setupSearchParam(UriComponentsBuilder builder, Optional<String> fullText,
+            List<String> searchTerms, Optional<LocalDate> startDate, Optional<LocalDate> endDate) {
+        fullText.ifPresent(str -> builder.queryParam("t", str));
+        if (!searchTerms.isEmpty()) {
+            builder.queryParam("in", searchTerms);
+        }
+        startDate.ifPresent(d -> builder.queryParam("startDate", startDate));
+        endDate.ifPresent(d -> builder.queryParam("endDate", endDate));
+    }
+
+    private UriComponentsBuilder builderWithPageParam(String url, int page, int size, String sortBy, String dir) {
+        return UriComponentsBuilder.fromHttpUrl(url)
+                .queryParam("page", page)
+                .queryParam("size", size)
+                .queryParam("sortBy", sortBy)
+                .queryParam("dir", dir);
+    }
+
 }

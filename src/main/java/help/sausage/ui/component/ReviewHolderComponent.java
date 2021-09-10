@@ -31,13 +31,13 @@ public class ReviewHolderComponent extends VerticalLayout {
     @Getter @Setter
     private int offset = 0;
     @Getter @Setter
-    private int size = DEFAULT_SIZE;
+    private int size;
     private DataProvider<Review, Void> dataProvider;
 
-
-    public ReviewHolderComponent(FetchCallback<Review, Void> fetchCallback) {
+    public ReviewHolderComponent(FetchCallback<Review, Void> fetchCallback, int size, boolean load) {
         this.dataProvider = DataProvider.fromCallbacks(fetchCallback, this::maxCount);
         this.reviewClient = ApplicationContextProvider.getCtx().getBean(ReviewClient.class);
+        this.size = size;
         this.query = createQuery();
 
         setDefaultHorizontalComponentAlignment(Alignment.CENTER);
@@ -48,7 +48,11 @@ public class ReviewHolderComponent extends VerticalLayout {
         loadMoreBtn.addClickListener(this::loadMore);
         loadMoreBtn.setId("review-holder-load-btn");
 
-        loadReviews();
+        if (load) loadReviews();
+    }
+
+    public ReviewHolderComponent(FetchCallback<Review, Void> fetchCallback, boolean load) {
+        this(fetchCallback, DEFAULT_SIZE, load);
     }
 
     public void loadReviews() {

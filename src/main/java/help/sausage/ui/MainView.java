@@ -76,7 +76,7 @@ public class MainView extends VerticalLayout implements ReviewFormComponent.Revi
         reviewForm.addOnReviewCreatedListener(this);
         reviewForm.setClassName("main-review-form");
 
-        this.reviewHolder = new ReviewHolderComponent(this::queryReview);
+        this.reviewHolder = new ReviewHolderComponent(this::queryReview, true);
         centerColumn.add(reviewForm, reviewHolder);
         VerticalLayout left = new LeftColumnComponent();
         left.getStyle().clear();

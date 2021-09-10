@@ -3,6 +3,7 @@ package help.sausage.service;
 import static help.sausage.entity.UnknownCrimEntity.newUnknownCrim;
 import static help.sausage.service.ReviewMapper.toDto;
 
+import com.querydsl.core.types.Predicate;
 import help.sausage.dto.NewReviewDto;
 import help.sausage.dto.ReviewDto;
 import help.sausage.dto.ReviewUpdateDto;
@@ -16,11 +17,13 @@ import help.sausage.repository.AppUserRepository;
 import help.sausage.repository.ReviewLikeRepository;
 import help.sausage.repository.ReviewRepository;
 import help.sausage.repository.UnkownCrimsRepository;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.UUID;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -37,10 +40,16 @@ public class ReviewService {
 
     private final ReviewRepository reviewRepository;
     private final ReviewLikeRepository reviewLikeRepository;
-
     private final AppUserRepository appUserRepository;
     private final UnkownCrimsRepository unkownCrimsRepository;
 
+    /**
+     * Creates a new review based on the data in the {@link NewReviewDto new review}
+     * and returns it
+     *
+     * @param reviewDto data for the new review
+     * @return the data of the newly created and saved review
+     */
     @Transactional
     public ReviewDto createNewReview(NewReviewDto reviewDto) {
         List<AppUserEntity> knownCrims = new ArrayList<>();
@@ -66,18 +75,50 @@ public class ReviewService {
         return withTotalLikes(saved);
     }
 
+    /**
+     * Find *ALL* reviews created by a user, ie no pagination is applied. Might be very slow for
+     * large amount.
+     *
+     * @param username the username to find review for
+     * @return *ALL* reviews created by a user.
+     */
     public List<ReviewDto> getReviewsByAuthorUsername(String username) {
         List<ReviewEntity> reviews = reviewRepository.findAllByAuthorUsername(username, Sort.by("reviewDate"));
         return reviews.stream().map(this::withTotalLikes)
                 .toList();
     }
 
+    /**
+     * Queries all  {@link ReviewDto reviews} as specified by the pagination parameters without any filtering.
+     *
+     * @param page page index
+     * @param size size of pages
+     * @param sortBy field to be sorted by, for the pagination to know which indexed element to return
+     * @param direction the direction of the sort, either asc or desc
+     * @return a number of reviews wrapped in a {@link Page page}. If there were more or equals elements
+     *         in the dataset than {@code size}, an amount equal to {@code size} is return. Otherwise,
+     *         less element will be returned, or 0 if pagination has reach the end.
+     */
     public Page<ReviewDto> getReviewsPaginated(int page, int size, String sortBy, String direction) {
-        Direction dir = Direction.fromOptionalString(direction).orElse(Direction.DESC);
-        Pageable pageable = PageRequest.of(page, size, Sort.by(dir, sortBy));
+        Pageable pageable = createPeageable(page, size, sortBy, direction);
         return reviewRepository.findAll(pageable).map(this::withTotalLikes);
     }
 
+    /**
+     * Queries {@link ReviewDto reviews} that tinvolved a specific criminal, as specified by the
+     * pagination parameters.
+     *
+     * @param crimUsername the username of the criminal. Only reviews containing that username
+     *                     tagged as a participant will be returned.
+     * @param page page index
+     * @param size size of pages
+     * @param sortBy field to be sorted by, for the pagination to know which indexed element to return
+     * @param direction the direction of the sort, either asc or desc
+     * @return a number of reviews wrapped in a {@link Page page} in which this {@code crimUsername}.
+     *        was involved. If there were more or equals elements
+     *        in the dataset than {@code size}, an amount equal to {@code size} is return. Otherwise,
+     *        less element will be returned, or 0 if pagination has reach the end.
+     */
     public List<ReviewDto> getReviewByCrimUsername(String crimUsername, int page, int size, String sortBy, String direction) {
         Direction dir = Direction.fromOptionalString(direction).orElse(Direction.DESC);
         Pageable pageable = PageRequest.of(page, size, Sort.by(dir, sortBy));
@@ -155,7 +196,28 @@ public class ReviewService {
                         .formatted(reviewId.toString()))));
     }
 
+    public List<ReviewDto> searchReviews(
+            Optional<String> fullText,
+            List<String> searchTerms,
+            Optional<LocalDate> startDate,
+            Optional<LocalDate> endDate,
+            int page,
+            int size,
+            String sortBy,
+            String dir) {
+        Predicate predicate = FullReviewSearch.getFullSearch(fullText, searchTerms, startDate, endDate);
+        Pageable pageRequest = createPeageable(page, size, sortBy, dir);
+        return reviewRepository.findAll(predicate, pageRequest).map(this::withTotalLikes).toList();
+    }
+
+    public Pageable createPeageable(int page, int size, String sortBy, String dir) {
+        Direction direction = Direction.fromOptionalString(dir).orElse(Direction.DESC);
+        return PageRequest.of(page, size, Sort.by(direction, sortBy));
+    }
+
     public long countTotalReview() {
         return reviewRepository.count();
     }
+
+
 }

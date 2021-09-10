@@ -62,7 +62,7 @@ public class CrimView extends VerticalLayout
         CrimInfoComponent crimInfoComponent = new CrimInfoComponent(crimInfo);
         center.add(crimInfoComponent);
 
-        this.reviewHolder = new ReviewHolderComponent(this::queryReview);
+        this.reviewHolder = new ReviewHolderComponent(this::queryReview, true);
 
         center.add(reviewHolder);
         center.setHorizontalComponentAlignment(Alignment.CENTER, reviewHolder);

@@ -16,7 +16,6 @@ import org.springframework.http.ResponseEntity;
 @Slf4j
 public class ReviewFormComponent extends ReviewForm<NewReviewDto> {
 
-
     protected final ReviewClient reviewClient;
 
     public ReviewFormComponent() {

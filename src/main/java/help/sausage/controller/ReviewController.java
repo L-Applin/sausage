@@ -37,5 +37,9 @@ public interface ReviewController {
         Optional<String> fullText,
         List<String> searchTerms,
         Optional<LocalDate> startDate,
-        Optional<LocalDate> endDate);
+        Optional<LocalDate> endDate,
+        int page,
+        int size,
+        String sortBy,
+        String dir);
 }
