@@ -19,7 +19,7 @@ public class LeftColumnComponent extends VerticalLayout {
 
     public LeftColumnComponent() {
         SessionUser user = VaadinSession.getCurrent().getAttribute(SessionUser.class);
-        if (user != null) loggedIn(user);
+        loggedIn(user);
     }
 
     private void loggedIn(SessionUser user) {
@@ -32,9 +32,13 @@ public class LeftColumnComponent extends VerticalLayout {
         final Anchor logoutAnchor = new Anchor("", "Logout");
         H2 logout = new H2(logoutAnchor);
         logout.addClickListener(e -> UI.getCurrent().getPage().setLocation("/logout"));
+        final Anchor profileOrLogin = user == null
+                ? new Anchor("login", "Login")
+                : new Anchor("profile/" + user.username(), "Profile");
         List<H2> menuItems = List.of(
                 new H2(new Anchor("/", "Home")),
-                new H2(new Anchor("profile/"+ user.username(), "Profile")),
+                new H2(profileOrLogin),
+                new H2(new Anchor("search", "Search")),
                 logout);
 
         setClassName("main-left-column");

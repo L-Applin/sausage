@@ -144,6 +144,7 @@ public class ReviewClient implements ReviewController {
     @Override
     public ResponseEntity<List<ReviewDto>> searchReview(Optional<String> fullText,
             List<String> searchTerms, Optional<LocalDate> startDate, Optional<LocalDate> endDate,
+            Optional<String> author, List<String> crims,
             int page, int size, String sortBy, String dir) {
         final String url = host + BASE_URL + GET_SEARCH;
         UriComponentsBuilder builder = builderWithPageParam(url, page, size, sortBy, dir);
@@ -168,11 +169,22 @@ public class ReviewClient implements ReviewController {
                 HttpMethod.GET,
                 HttpEntity.EMPTY,
                 REVIEW_LIST_RESPONSE_TYPE);
+    }
 
+    public ResponseEntity<List<ReviewDto>> searchReview(Optional<String> fullText,
+            List<String> searchTerms, Optional<LocalDate> startDate, Optional<LocalDate> endDate) {
+        final String url = host + BASE_URL + GET_SEARCH;
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url);
+        setupSearchParam(builder, fullText, searchTerms, startDate, endDate);
+        return frontEndClient.exchange(
+                builder.toUriString(),
+                HttpMethod.GET,
+                HttpEntity.EMPTY,
+                REVIEW_LIST_RESPONSE_TYPE);
     }
 
     private void setupSearchParam(UriComponentsBuilder builder, Optional<String> fullText,
-            List<String> searchTerms, Optional<LocalDate> startDate, Optional<LocalDate> endDate) {
+        List<String> searchTerms, Optional<LocalDate> startDate, Optional<LocalDate> endDate) {
         fullText.ifPresent(str -> builder.queryParam("t", str));
         if (!searchTerms.isEmpty()) {
             builder.queryParam("in", searchTerms);

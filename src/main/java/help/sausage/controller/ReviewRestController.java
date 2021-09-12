@@ -92,16 +92,18 @@ public class ReviewRestController implements ReviewController {
     }
 
     @Override
+    @GetMapping(GET_SEARCH)
     public ResponseEntity<List<ReviewDto>> searchReview(
-            @RequestParam Optional<String> fullText,
-            @RequestParam List<String> searchTerms,
+            @RequestParam(name = SEARCH_TERM_TEXT) Optional<String> fullText,
+            @RequestParam(name = "in", required = false, defaultValue = "text") List<String> searchTerms,
             @RequestParam Optional<LocalDate> startDate,
             @RequestParam Optional<LocalDate> endDate,
+            @RequestParam(name = "a") Optional<String> author,
+            @RequestParam(name = "c", defaultValue = "", required = false) List<String> crims,
             @RequestParam(defaultValue = "0", required = false) int page,
-            @RequestParam(defaultValue = "10", required = false) int size,
+            @RequestParam(defaultValue = "50", required = false) int size,
             @RequestParam(defaultValue = "dateCreated", required = false) String sortBy,
-            @RequestParam(defaultValue = "desc", required = false) String dir)
-    {
+            @RequestParam(defaultValue = "desc", required = false) String dir) {
         final List<ReviewDto> body = reviewService
                 .searchReviews(fullText, searchTerms, startDate, endDate, page, size, sortBy, dir);
         return ResponseEntity.ok(body);

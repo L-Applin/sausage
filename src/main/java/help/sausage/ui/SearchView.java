@@ -5,6 +5,7 @@ import static help.sausage.utils.Null.safe;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.CheckboxGroup;
 import com.vaadin.flow.component.datepicker.DatePicker;
+import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.Hr;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -30,6 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 @Route("search")
 @PageTitle("Sausage app | Search result")
 @Slf4j
+@CssImport("./styles/search-view.css")
 public class SearchView extends VerticalLayout implements BeforeEnterObserver {
 
     public static final String FULL_TEXT_QUERY_PARAM = "t";
@@ -39,16 +41,20 @@ public class SearchView extends VerticalLayout implements BeforeEnterObserver {
     private CheckboxGroup<String> checkboxGroup = new CheckboxGroup<>();
     private DatePicker startDate = new DatePicker("start date");
     private DatePicker endDate = new DatePicker("end date");
+    private TextField author = new TextField("author");
+    private TextField crim = new TextField("crim");
     private ReviewHolderComponent reviewHolder = new ReviewHolderComponent(this::searchFor, false);
 
     private ReviewClient reviewClient;
 
     @Override
     public void beforeEnter(BeforeEnterEvent event) {
+        removeAll();
         List<String> searches = event.getLocation().getQueryParameters().getParameters().get(FULL_TEXT_QUERY_PARAM);
         if (searches != null && searches.size() > 0) {
-            this.initfullSearch = searches.get(0);
-            log.info("Full text search for '{}'", initfullSearch);
+            final String searchFor = searches.get(0);
+            this.initfullSearch = searchFor;
+            log.info("Full text search for '{}'", this.initfullSearch);
         }
         this.reviewClient = ApplicationContextProvider.getCtx().getBean(ReviewClient.class);
         setDefaultHorizontalComponentAlignment(Alignment.CENTER);
@@ -58,12 +64,15 @@ public class SearchView extends VerticalLayout implements BeforeEnterObserver {
         HorizontalLayout wrapper = new HorizontalLayout();
         wrapper.add(left, center(), right);
         add(wrapper);
-        reviewHolder.loadReviews();
+        if (initfullSearch != null && !initfullSearch.equals("")) {
+            reviewHolder.loadReviews();
+        }
     }
 
     private VerticalLayout center() {
         VerticalLayout layout = new VerticalLayout();
         layout.setClassName("main-view-center");
+        layout.setId("search-view-center");
 
         if (initfullSearch != null) {
             searchField.setValue(initfullSearch);
@@ -72,17 +81,28 @@ public class SearchView extends VerticalLayout implements BeforeEnterObserver {
         layout.add(searchField);
 
         checkboxGroup.setLabel("Search terms");
-        checkboxGroup.setItems(List.of("text", "author", "crim", "comment"));
+        checkboxGroup.setItems(List.of("text", "author", "crim", "comments"));
         checkboxGroup.select("text", "author", "crim");
-        searchField.setId("search-form-checkbox-group");
+        checkboxGroup.setId("search-form-checkbox-group");
         layout.add(checkboxGroup);
+
+        layout.add(new Hr());
 
         HorizontalLayout dateWrapper = new HorizontalLayout(startDate, endDate);
         layout.add(dateWrapper);
-        Button search = new Button();
-        search.addClickListener(e -> reviewHolder.loadReviews());
-        layout.add(search);
+        HorizontalLayout h = new HorizontalLayout();
+        h.add(author);
+        h.add(crim);
+        layout.add(h);
+        Button searchBtn = new Button("Search");
+        searchBtn.addClickListener(e -> {
+            reviewHolder.reset();
+            reviewHolder.loadReviews();
+        });
+        h.add(searchBtn);
+        layout.setHorizontalComponentAlignment(Alignment.END, searchBtn);
         layout.add(new Hr());
+        layout.add(reviewHolder);
         return layout;
     }
 
@@ -99,7 +119,7 @@ public class SearchView extends VerticalLayout implements BeforeEnterObserver {
         Optional<LocalDate> endDateValue = endDate.getOptionalValue();
         List<ReviewDto> body = reviewClient.searchReview(
                 textSearch, searchTerms, startDateValue, endDateValue, query.getPage(),
-                query.getOffset()).getBody();
+                query.getPageSize()).getBody();
         return safe(body).map(Review::fromDto); // todo @Error how to handle null body here ??
     }
 }

@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 
 public interface ReviewController {
     String BASE_URL = "/api/review";
+    String SEARCH_TERM_TEXT = "t";
 
     ResponseEntity<ReviewDto> createNewReview(NewReviewDto reviewDto);
 
@@ -38,6 +39,8 @@ public interface ReviewController {
         List<String> searchTerms,
         Optional<LocalDate> startDate,
         Optional<LocalDate> endDate,
+        Optional<String> author,
+        List<String> crims,
         int page,
         int size,
         String sortBy,

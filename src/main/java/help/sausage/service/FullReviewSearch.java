@@ -3,9 +3,10 @@ package help.sausage.service;
 import static help.sausage.entity.SearchTerms.AUTHOR;
 import static help.sausage.entity.SearchTerms.CRIM;
 import static help.sausage.entity.SearchTerms.TEXT;
+import static help.sausage.utils.Null.orElse;
+import static help.sausage.utils.Null.safeOr;
 import static java.util.stream.Collectors.toSet;
 
-import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import help.sausage.entity.QReviewEntity;
@@ -27,11 +28,22 @@ public class FullReviewSearch {
         return review.reviewDate.between(start, end);
     }
 
-    public static BooleanExpression crimName(String username) {
-        return review.crims.any().username.eq(username);
+    public static BooleanExpression after(LocalDate start) {
+        return review.reviewDate.after(start);
     }
 
-    public static Predicate text(String text) {
+    public static BooleanExpression before(LocalDate end) {
+        return review.reviewDate.before(end);
+    }
+
+
+    public static BooleanExpression crimName(String username) {
+        return review.crims.any().username.eq(username).or(
+                review.unknownCrims.any().id.crimName.eq(username)
+        );
+    }
+
+    public static BooleanExpression text(String text) {
         return review.text.containsIgnoreCase(text); // todo use mySQL full text serach instead
     }
 
@@ -40,30 +52,38 @@ public class FullReviewSearch {
             List<String> searchTerms,
             Optional<LocalDate> startDate,
             Optional<LocalDate> endDate) {
-        BooleanBuilder fullSearch = new BooleanBuilder();
         Set<SearchTerms> terms = searchTerms.stream().filter(SearchTerms.allowedSearchTerms()::contains)
-                .map(s -> SearchTerms.valueOf(s.toUpperCase())).collect(toSet());
+            .map(s -> SearchTerms.valueOf(s.toUpperCase())).collect(toSet());
 
-        if (terms.contains(AUTHOR)) {
-            fullText.ifPresent(t -> fullSearch.and(authorName(t)));
+        BooleanExpression root = null;
+
+        if (fullText.isPresent()) {
+            if (terms.contains(TEXT)) {
+                root = text(fullText.get());
+            }
+            if (terms.contains(AUTHOR)) {
+                final BooleanExpression expr = authorName(fullText.get());
+                root = safeOr(root, expr, r -> r.or(expr));
+            }
+            if (terms.contains(CRIM)) {
+                final BooleanExpression expr = crimName(fullText.get());
+                root = root == null ? expr : root.or(expr);
+            }
         }
-
-        if (terms.contains(CRIM)) {
-            fullText.ifPresent(t -> fullSearch.and(crimName(t)));
-        }
-
         if (startDate.isPresent() && endDate.isPresent()) {
-            fullSearch.and(between(startDate.get(), endDate.get()));
-        } else {
-            startDate.ifPresent(d -> fullSearch.and(review.reviewDate.after(d)));
-            endDate.ifPresent(d -> fullSearch.and(review.reviewDate.after(d)));
+            final BooleanExpression expr = between(startDate.get(), endDate.get());
+            root = root == null ? expr : root.and(expr);
+        }
+        if (startDate.isPresent()) {
+            final BooleanExpression expr = after(startDate.get());
+            root = root == null ? expr : root.and(expr);
+        }
+        if (endDate.isPresent()) {
+            final BooleanExpression expr = before(endDate.get());
+            root = root == null ? expr : root.and(expr);
         }
 
-        if (terms.contains(TEXT)) {
-            fullText.ifPresent(t -> fullSearch.and(text(t)));
-        }
-
-        return fullSearch.getValue();
+        return orElse(root, review.reviewId.isNotNull());
     }
 
     // todo comments

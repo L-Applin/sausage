@@ -12,6 +12,7 @@ import help.sausage.client.ReviewClient;
 import help.sausage.ui.data.Review;
 import help.sausage.utils.ApplicationContextProvider;
 import java.util.Comparator;
+import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -34,7 +35,7 @@ public class ReviewHolderComponent extends VerticalLayout {
     private int size;
     private DataProvider<Review, Void> dataProvider;
 
-    public ReviewHolderComponent(FetchCallback<Review, Void> fetchCallback, int size, boolean load) {
+    public ReviewHolderComponent(FetchCallback<Review, Void> fetchCallback, int size, boolean preLoad) {
         this.dataProvider = DataProvider.fromCallbacks(fetchCallback, this::maxCount);
         this.reviewClient = ApplicationContextProvider.getCtx().getBean(ReviewClient.class);
         this.size = size;
@@ -48,20 +49,35 @@ public class ReviewHolderComponent extends VerticalLayout {
         loadMoreBtn.addClickListener(this::loadMore);
         loadMoreBtn.setId("review-holder-load-btn");
 
-        if (load) loadReviews();
+        if (preLoad) loadReviews();
     }
 
-    public ReviewHolderComponent(FetchCallback<Review, Void> fetchCallback, boolean load) {
-        this(fetchCallback, DEFAULT_SIZE, load);
+    public ReviewHolderComponent(FetchCallback<Review, Void> fetchCallback, boolean preLoad) {
+        this(fetchCallback, DEFAULT_SIZE, preLoad);
+    }
+
+    public void reset() {
+        removeAll();
+        offset = 0;
+        query = createQuery();
     }
 
     public void loadReviews() {
-        dataProvider.fetch(query).forEach(r -> add(new ReviewCardComponent(r)));
+        List<Review> reviews = dataProvider.fetch(query).toList();
+        reviews.forEach(r -> add(new ReviewCardComponent(r)));
         offset += size;
         query = createQuery();
         add(loadMoreBtn);
         updateCount(query);
     }
+
+    public void loadReviews(Query<Review, Void> query) {
+        dataProvider.fetch(query)
+                .forEach(r -> add(new ReviewCardComponent(r)));
+        add(loadMoreBtn);
+        updateCount(query);
+    }
+
 
     public Query<Review, Void> createQuery() {
         return new Query<>(offset, size, QuerySortOrder.desc("dateCreated").build(),

@@ -3,6 +3,7 @@ package help.sausage.utils;
 import java.util.Collection;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
 public class Null {
@@ -23,8 +24,11 @@ public class Null {
     }
 
     public static <T> Stream<T> safe (Collection<T> collection) {
-        return Null.<Collection<T>, Stream<T>>
-                safe(collection, Collection::stream, Stream::empty);
+        return collection == null ? Stream.empty() : collection.stream();
+    }
+
+    public static <T> T safeOr(T maybeNull, T ifNull, UnaryOperator<T> ifNotNullDo) {
+        return maybeNull == null ? ifNull : ifNotNullDo.apply(maybeNull);
     }
 
 }

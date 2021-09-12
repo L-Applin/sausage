@@ -1,0 +1,26 @@
+#search-view-center > vaadin-text-field {
+  width: 100%;
+}
+
+#search-view-center > vaadin-horizontal-layout {
+  width: 100%;
+  margin-top: 0;
+  padding-top: 0;
+}
+
+#search-view-center > vaadin-horizontal-layout > vaadin-text-field {
+  width: 100%;
+}
+
+#search-view-center > vaadin-horizontal-layout > vaadin-date-picker {
+  width: 100%;
+}
+
+#search-view-center > vaadin-horizontal-layout > vaadin-button {
+  margin-left: 3em;
+  width: 50%;
+}
+
+#search-form-checkbox-group {
+  margin-top: 0;
+}
