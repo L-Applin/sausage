@@ -19,4 +19,6 @@ public class ReviewUpdateDto {
     private Integer stars;
     @JsonProperty
     private String text;
+    @JsonProperty
+    private String imgUrl;
 }

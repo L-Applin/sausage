@@ -1,3 +1,7 @@
+.main-review-form {
+  width: var(--center-width) !important;
+}
+
 .main-review-form-star-icon {
   size: 1em;
   margin: 0;

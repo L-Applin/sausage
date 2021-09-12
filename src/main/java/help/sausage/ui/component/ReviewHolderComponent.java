@@ -50,6 +50,7 @@ public class ReviewHolderComponent extends VerticalLayout {
         loadMoreBtn.setId("review-holder-load-btn");
 
         if (preLoad) loadReviews();
+
     }
 
     public ReviewHolderComponent(FetchCallback<Review, Void> fetchCallback, boolean preLoad) {

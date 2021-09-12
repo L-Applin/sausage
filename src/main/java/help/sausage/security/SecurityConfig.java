@@ -1,5 +1,7 @@
 package help.sausage.security;
 
+import static org.springframework.http.HttpMethod.POST;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +41,7 @@ public class SecurityConfig {
             http.cors().and().csrf().disable()
                     .antMatcher("/api/**")
                     .authorizeRequests()
+                    .antMatchers(POST, "/api/user").permitAll()
                     .anyRequest().authenticated()
 //                    .antMatchers(PATCH,
 //                            "/api/review/*",

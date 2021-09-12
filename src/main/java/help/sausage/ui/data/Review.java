@@ -15,6 +15,7 @@ public record Review (
     LocalDate dateReview,
     int stars,
     String text,
+    String imageUrl,
     long likes,
     long comments
     ) implements Comparable<Review>{
@@ -31,6 +32,7 @@ public record Review (
             review.getDateReview(),
             review.getStars(),
             review.getText(),
+            review.getImgUrl(),
             review.getTotalLikes(),
             review.getTotalComments());
     }
@@ -40,6 +42,6 @@ public record Review (
 
     @Override
     public int compareTo(Review o) {
-        return 0;
+        return dateCreated.compareTo(o.dateCreated);
     }
 }

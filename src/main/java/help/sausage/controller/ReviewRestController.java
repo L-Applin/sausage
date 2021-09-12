@@ -99,13 +99,13 @@ public class ReviewRestController implements ReviewController {
             @RequestParam Optional<LocalDate> startDate,
             @RequestParam Optional<LocalDate> endDate,
             @RequestParam(name = "a") Optional<String> author,
-            @RequestParam(name = "c", defaultValue = "", required = false) List<String> crims,
+            @RequestParam(name = "c") Optional<String> crims,
             @RequestParam(defaultValue = "0", required = false) int page,
             @RequestParam(defaultValue = "50", required = false) int size,
             @RequestParam(defaultValue = "dateCreated", required = false) String sortBy,
             @RequestParam(defaultValue = "desc", required = false) String dir) {
         final List<ReviewDto> body = reviewService
-                .searchReviews(fullText, searchTerms, startDate, endDate, page, size, sortBy, dir);
+                .searchReviews(fullText, searchTerms, startDate, endDate, author, crims, page, size, sortBy, dir);
         return ResponseEntity.ok(body);
     }
 

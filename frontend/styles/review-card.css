@@ -1,11 +1,12 @@
 review-card {
-  width: 95% !important;
-  align-self: center;
+  width: 96% !important;
+  align-self: center !important;
   padding: 16px 0;
   box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
   border-radius: 0.5em;
   background-color: #f4f4f4;
   display: block;
+  margin: 0.5em 0.5em 0.5em 0.75em;
 }
 
 review-card:hover {
@@ -26,6 +27,7 @@ review-card:hover {
   word-wrap: break-word;
   white-space: normal;
   padding: 0 16px 0 32px;
+  margin-top: 1em;
 }
 
 .review-card-star-holder {
@@ -46,7 +48,6 @@ review-card:hover {
 }
 
 .review-card-crim-list {
-  border: 3px red;
   margin-left: 32px;
 }
 
@@ -91,6 +92,11 @@ review-card:hover {
 
 #review-card-seperator {
   margin: 8px 32px 8px 32px;
+}
+
+#review-card-img {
+  width: 100%;
+  margin-top: 1em;
 }
 
 

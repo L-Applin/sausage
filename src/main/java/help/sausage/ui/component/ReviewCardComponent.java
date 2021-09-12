@@ -112,6 +112,13 @@ public class ReviewCardComponent extends VerticalLayout {
         add(authorTop);
         add(sub);
         add(descrContainer);
+        if (review.imageUrl() != null && !"".equals(review.imageUrl())) {
+            // todo check if image is valide ???
+            Image image = new Image(review.imageUrl(), "review image");
+            image.setId("review-card-img");
+            setHorizontalComponentAlignment(Alignment.CENTER, image);
+            add(image);
+        }
         add(hr);
         add(crimsHolder);
     }

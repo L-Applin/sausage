@@ -2,7 +2,6 @@ package help.sausage.dto;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import javax.validation.constraints.NotNull;
@@ -34,4 +33,6 @@ public class ReviewDto {
     private long totalComments;
     @NotNull
     private String text;
+
+    private String imgUrl;
 }

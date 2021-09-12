@@ -24,6 +24,7 @@ create table if not exists reviews (
     date_updated    timestamp null default null,
     stars           smallint not null default 0,
     text            varchar(512) not null default '',
+    img_link        varchar(255) null ,
     FULLTEXT (text),
 
     constraint foreign key review_author_id_fk(author_id) references app_users(user_id) on delete cascade

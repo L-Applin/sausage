@@ -74,35 +74,44 @@ public class SearchView extends VerticalLayout implements BeforeEnterObserver {
         layout.setClassName("main-view-center");
         layout.setId("search-view-center");
 
+        VerticalLayout form = new VerticalLayout();
+        form.setId("search-view-form");
+
         if (initfullSearch != null) {
             searchField.setValue(initfullSearch);
         }
         searchField.setId("search-form-text-search");
-        layout.add(searchField);
+        searchField.setClassName("search-view-full-width");
+        form.add(searchField);
 
         checkboxGroup.setLabel("Search terms");
         checkboxGroup.setItems(List.of("text", "author", "crim", "comments"));
         checkboxGroup.select("text", "author", "crim");
         checkboxGroup.setId("search-form-checkbox-group");
-        layout.add(checkboxGroup);
+        form.add(checkboxGroup);
 
-        layout.add(new Hr());
+        form.add(new Hr());
 
+        startDate.setClassName("search-view-full-width");
+        endDate.setClassName("search-view-full-width");
+        author.setClassName("search-view-full-width");
+        endDate.setClassName("search-view-full-width");
         HorizontalLayout dateWrapper = new HorizontalLayout(startDate, endDate);
-        layout.add(dateWrapper);
+        form.add(dateWrapper);
         HorizontalLayout h = new HorizontalLayout();
         h.add(author);
         h.add(crim);
-        layout.add(h);
+        form.add(h);
         Button searchBtn = new Button("Search");
+        searchBtn.setId("search-view-btn");
         searchBtn.addClickListener(e -> {
             reviewHolder.reset();
             reviewHolder.loadReviews();
         });
         h.add(searchBtn);
-        layout.setHorizontalComponentAlignment(Alignment.END, searchBtn);
-        layout.add(new Hr());
-        layout.add(reviewHolder);
+        form.setHorizontalComponentAlignment(Alignment.END, searchBtn);
+        form.add(new Hr());
+        layout.add(form, reviewHolder);
         return layout;
     }
 

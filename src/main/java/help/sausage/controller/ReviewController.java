@@ -40,7 +40,7 @@ public interface ReviewController {
         Optional<LocalDate> startDate,
         Optional<LocalDate> endDate,
         Optional<String> author,
-        List<String> crims,
+        Optional<String> crims,
         int page,
         int size,
         String sortBy,

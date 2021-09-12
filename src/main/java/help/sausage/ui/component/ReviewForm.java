@@ -25,6 +25,7 @@ public abstract class ReviewForm<T> extends VerticalLayout {
     protected final TextArea reviewArea = new TextArea(null, "Did you have a good kidnapping experience?");
     protected final DatePicker datePicker = new DatePicker(LocalDate.now());
     protected final StarVoteSelectComponent starsVoteComponent = new StarVoteSelectComponent();
+    protected final TextField imageLink = new TextField(null, "image link, ie: https://i.imgur.com/D9WVl4T.jpeg");
 
     protected List<ReviewFormComponent.ReviewCreatedListener> reviewCreatedListeners = new ArrayList<>();
 
@@ -69,7 +70,8 @@ public abstract class ReviewForm<T> extends VerticalLayout {
         setHorizontalComponentAlignment(Alignment.CENTER, formLayout, reviewArea);
         setMargin(false);
 
-        add(reviewArea, crimBoxHolder, formLayout);
+        imageLink.setId("main-review-img-link");
+        add(reviewArea, imageLink, crimBoxHolder, formLayout);
 
     }
 

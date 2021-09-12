@@ -68,7 +68,8 @@ public class ReviewService {
                 reviewDto.getDate(),
                 null,
                 reviewDto.getStars(),
-                reviewDto.getText());
+                reviewDto.getText(),
+                reviewDto.getImgUrl());
         ReviewEntity saved = reviewRepository.save(toSave);
         unkownCrims.forEach(str -> unkownCrimsRepository.save(
                 newUnknownCrim(str, saved.getReviewId())));
@@ -159,6 +160,9 @@ public class ReviewService {
         if (review.getDate() != null) {
             previous.setReviewDate(review.getDate());
         }
+        if (review.getImgUrl() != null) {
+            previous.setImgUrl(review.getImgUrl());
+        }
         previous.setUpdated(LocalDateTime.now());
         return withTotalLikes(previous, totalLikes);
     }
@@ -201,6 +205,8 @@ public class ReviewService {
             List<String> searchTerms,
             Optional<LocalDate> startDate,
             Optional<LocalDate> endDate,
+            Optional<String> author,
+            Optional<String> crims,
             int page,
             int size,
             String sortBy,

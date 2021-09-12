@@ -3,9 +3,11 @@ package help.sausage.ui;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.CssImport;
+import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.textfield.PasswordField;
@@ -22,6 +24,8 @@ import help.sausage.client.UserClient;
 import help.sausage.dto.NewUserDto;
 import help.sausage.dto.UserDto;
 import help.sausage.entity.UserIcon;
+import help.sausage.ui.validation.CharBlackListValidator;
+import help.sausage.ui.validation.DelegateValidator;
 import help.sausage.utils.ResponseWrapper;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -34,12 +38,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Route("account")
 @CssImport("./styles/create-account-view.css")
 @PageTitle("New account | Sausage app")
-public class NewAccountView extends VerticalLayout {
+public class NewAccountView extends HorizontalLayout {
 
     public static final int MIN_PWD_LENGTH = 8;
     public static final int MAX_PWD_LENGTH = 64;
     public static final int MIN_USERNAME_LENGTH = 2;
-    public static final int MAX_USERNAME_LENGTH = 32;
+    public static final int MAX_USERNAME_LENGTH = 24;
 
     private final PasswordField pwd =
             new PasswordField("Password", "%d-%d char".formatted(MIN_PWD_LENGTH, MAX_PWD_LENGTH));
@@ -59,13 +63,17 @@ public class NewAccountView extends VerticalLayout {
     public NewAccountView(@Autowired UserClient userClient,
             @Autowired PasswordEncoder passwordEncoder,
             @Autowired ResponseWrapper responseWrapper) {
+        VerticalLayout layout = new VerticalLayout();
         this.userClient = userClient;
         this.passwordEncoder = passwordEncoder;
         this.responseWrapper = responseWrapper;
         pwd.setMinLength(MIN_PWD_LENGTH);
         pwd.setMaxLength(MAX_PWD_LENGTH);
 
-        setDefaultHorizontalComponentAlignment(Alignment.CENTER);
+        setHeight("100%");
+
+        layout.setDefaultHorizontalComponentAlignment(Alignment.CENTER);
+        layout.setId("new-account-layout");
 
         List<ImageSelectItem> icons = Stream.of(UserIcon.values()).map(ImageSelectItem::fromIcon).toList();
         iconSelect.setClassName("create-account-icon-selector");
@@ -76,10 +84,15 @@ public class NewAccountView extends VerticalLayout {
         btn.addClickListener(this::createBtnClickListener);
         btn.setClassName("create-account-btn");
 
+        StringLengthValidator usernameStrLenValidator = new StringLengthValidator(
+                "username '{0}' must be between %d and %d character"
+                        .formatted(MIN_USERNAME_LENGTH, MAX_USERNAME_LENGTH),
+                MIN_USERNAME_LENGTH, MAX_USERNAME_LENGTH);
+        CharBlackListValidator  blackListValidator = new CharBlackListValidator(",");
+        DelegateValidator<String> usernameValidator = new DelegateValidator<>(
+                List.of(blackListValidator, usernameStrLenValidator));
         Binding<NewUserDto, String> usernameBinding = binder.forField(usernameField)
-                .withValidator(new StringLengthValidator(
-                        "username must be between %d and %d character".formatted(MIN_USERNAME_LENGTH, MAX_USERNAME_LENGTH),
-                        MIN_USERNAME_LENGTH, MAX_USERNAME_LENGTH))
+                .withValidator(usernameValidator)
                 .bind(NewUserDto::username, (b, f) -> user = new NewUserDto(f, b.encodedPwd(), b.icon(), b.dateJoined()));
 
         Binding<NewUserDto, String> pwdBinding = binder.forField(pwd)
@@ -93,7 +106,13 @@ public class NewAccountView extends VerticalLayout {
 
         status.setVisible(false);
         status.setId("create-account-error");
-        add(usernameField, pwd, iconSelect, btn, status);
+        layout.add(usernameField, pwd, iconSelect, btn, status);
+        layout.add(usernameField, pwd, iconSelect, btn, status);
+        setDefaultVerticalComponentAlignment(Alignment.CENTER);
+        VerticalLayout wrapper = new VerticalLayout();
+        wrapper.add(new H1("Create new Sausage user"), layout);
+        wrapper.setDefaultHorizontalComponentAlignment(Alignment.CENTER);
+        add(wrapper);
     }
 
     private void createBtnClickListener(ClickEvent<Button> event) {
@@ -136,5 +155,7 @@ public class NewAccountView extends VerticalLayout {
             return new ImageSelectItem(icon, userIcon.name());
         }
     }
+
+
 
 }

@@ -2,25 +2,25 @@
   width: 100%;
 }
 
-#search-view-center > vaadin-horizontal-layout {
+#search-view-center > vaadin-vertical-layout > vaadin-horizontal-layout {
   width: 100%;
   margin-top: 0;
   padding-top: 0;
 }
 
-#search-view-center > vaadin-horizontal-layout > vaadin-text-field {
+.search-view-full-width {
   width: 100%;
 }
 
-#search-view-center > vaadin-horizontal-layout > vaadin-date-picker {
-  width: 100%;
-}
-
-#search-view-center > vaadin-horizontal-layout > vaadin-button {
+#search-view-btn {
   margin-left: 3em;
   width: 50%;
 }
 
 #search-form-checkbox-group {
   margin-top: 0;
+}
+
+#search-view-form {
+  width: var(--center-width);
 }

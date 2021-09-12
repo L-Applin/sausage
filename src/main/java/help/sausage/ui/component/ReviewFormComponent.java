@@ -23,7 +23,7 @@ public class ReviewFormComponent extends ReviewForm<NewReviewDto> {
     }
 
     @Override
-    NewReviewDto getData() {
+    public NewReviewDto getData() {
         SessionUser user = VaadinSession.getCurrent().getAttribute(SessionUser.class);
         List<String> crimNames = crimBoxHolder.getChildren()
                 .map(el -> ((KnownCrimBtnComponent) el).getCrimName()).toList();
@@ -32,7 +32,8 @@ public class ReviewFormComponent extends ReviewForm<NewReviewDto> {
                 crimNames,
                 datePicker.getValue(),
                 starsVoteComponent.getAmount(),
-                reviewArea.getValue());
+                reviewArea.getValue(),
+                imageLink.getValue());
     }
 
     @Override

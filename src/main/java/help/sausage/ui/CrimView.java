@@ -15,8 +15,8 @@ import help.sausage.dto.ErrorDto;
 import help.sausage.dto.ReviewDto;
 import help.sausage.ui.component.CrimInfoComponent;
 import help.sausage.ui.component.LeftColumnComponent;
-import help.sausage.ui.component.ReviewHolderComponent;
 import help.sausage.ui.component.RightColumnComponent;
+import help.sausage.ui.component.VirtualReviewList;
 import help.sausage.ui.data.Review;
 import help.sausage.utils.ApplicationContextProvider;
 import help.sausage.utils.Null;
@@ -36,7 +36,7 @@ public class CrimView extends VerticalLayout
             ApplicationContextProvider.getCtx().getBean(CriminalClient.class);
     private final ResponseWrapper wrapper =
             ApplicationContextProvider.getCtx().getBean(ResponseWrapper.class);
-    private ReviewHolderComponent reviewHolder;
+    private VirtualReviewList reviewHolder;
 
     @Override
     public String getPageTitle() {
@@ -62,7 +62,7 @@ public class CrimView extends VerticalLayout
         CrimInfoComponent crimInfoComponent = new CrimInfoComponent(crimInfo);
         center.add(crimInfoComponent);
 
-        this.reviewHolder = new ReviewHolderComponent(this::queryReview, true);
+        this.reviewHolder = new VirtualReviewList(this::queryReview);
 
         center.add(reviewHolder);
         center.setHorizontalComponentAlignment(Alignment.CENTER, reviewHolder);

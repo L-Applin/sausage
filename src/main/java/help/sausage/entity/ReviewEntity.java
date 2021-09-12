@@ -56,7 +56,7 @@ public class ReviewEntity {
     @Column(name = "date_review")
     private LocalDate reviewDate;
 
-    @Column(name = "date_updated", nullable = true)
+    @Column(name = "date_updated")
     private LocalDateTime updated;
 
     @Column(name = "stars")
@@ -64,5 +64,8 @@ public class ReviewEntity {
 
     @Column(name = "text")
     private String text;
+
+    @Column(name = "img_link")
+    private String imgUrl;
 
 }

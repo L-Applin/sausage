@@ -1,0 +1,11 @@
+#main-review-holder {
+ margin: 0;
+}
+
+:host(#main-review-img-link) [part="text-area"] {
+  padding: 0;
+}
+
+vaadin-input-container {
+  padding: 0;
+}

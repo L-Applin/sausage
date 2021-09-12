@@ -2,6 +2,7 @@ package help.sausage.ui;
 
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.dependency.CssImport;
+import com.vaadin.flow.component.html.Hr;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -15,8 +16,8 @@ import help.sausage.dto.ReviewDto;
 import help.sausage.dto.UserDto;
 import help.sausage.ui.component.LeftColumnComponent;
 import help.sausage.ui.component.ReviewFormComponent;
-import help.sausage.ui.component.ReviewHolderComponent;
 import help.sausage.ui.component.RightColumnComponent;
+import help.sausage.ui.component.VirtualReviewList;
 import help.sausage.ui.data.Review;
 import help.sausage.ui.data.SessionUser;
 import help.sausage.utils.ApplicationContextProvider;
@@ -32,7 +33,8 @@ import org.springframework.http.ResponseEntity;
 public class MainView extends VerticalLayout implements ReviewFormComponent.ReviewCreatedListener {
 
     private final ReviewClient reviewClient;
-    private ReviewHolderComponent reviewHolder;
+//    private ReviewHolderComponent reviewHolder;
+    private VirtualReviewList reviewList;
     private final UserClient userClient;
     private SessionUser user;
 
@@ -76,8 +78,10 @@ public class MainView extends VerticalLayout implements ReviewFormComponent.Revi
         reviewForm.addOnReviewCreatedListener(this);
         reviewForm.setClassName("main-review-form");
 
-        this.reviewHolder = new ReviewHolderComponent(this::queryReview, true);
-        centerColumn.add(reviewForm, reviewHolder);
+//        this.reviewHolder = new ReviewHolderComponent(this::queryReview, true);
+        this.reviewList = new VirtualReviewList(this::queryReview);
+        centerColumn.add(reviewForm, new Hr(), reviewList);
+        centerColumn.add(reviewList);
         VerticalLayout left = new LeftColumnComponent();
         left.getStyle().clear();
         VerticalLayout right = new RightColumnComponent();

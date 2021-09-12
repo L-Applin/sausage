@@ -19,7 +19,8 @@ public class ReviewMapper {
                 review.getStars(),
                 totalLikes,
                 totalComments,
-                review.getText());
+                review.getText(),
+                review.getImgUrl());
     }
 
 

@@ -43,7 +43,8 @@ public class EditReviewForm extends ReviewForm<ReviewUpdateDto> {
                 crimNames,
                 datePicker.getValue(),
                 starsVoteComponent.getAmount(),
-                reviewArea.getValue());
+                reviewArea.getValue(),
+                imageLink.getValue());
     }
 
     @Override

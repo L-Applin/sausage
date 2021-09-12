@@ -2,7 +2,6 @@ package help.sausage.dto;
 
 import help.sausage.validation.ValidNewReview;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
@@ -20,5 +19,6 @@ public class NewReviewDto {
     private LocalDate date;
     private int stars;
     private String text;
+    private String imgUrl;
 
 }

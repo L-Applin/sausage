@@ -144,11 +144,11 @@ public class ReviewClient implements ReviewController {
     @Override
     public ResponseEntity<List<ReviewDto>> searchReview(Optional<String> fullText,
             List<String> searchTerms, Optional<LocalDate> startDate, Optional<LocalDate> endDate,
-            Optional<String> author, List<String> crims,
+            Optional<String> author, Optional<String> crims,
             int page, int size, String sortBy, String dir) {
         final String url = host + BASE_URL + GET_SEARCH;
         UriComponentsBuilder builder = builderWithPageParam(url, page, size, sortBy, dir);
-        setupSearchParam(builder, fullText, searchTerms, startDate, endDate);
+        setupSearchParam(builder, fullText, searchTerms, startDate, endDate, author, crims);
         return frontEndClient.exchange(
                 builder.toUriString(),
                 HttpMethod.GET,
@@ -163,7 +163,7 @@ public class ReviewClient implements ReviewController {
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url)
                 .queryParam("page", page)
                 .queryParam("size", size);
-        setupSearchParam(builder, fullText, searchTerms, startDate, endDate);
+        setupSearchParam(builder, fullText, searchTerms, startDate, endDate, Optional.empty(), Optional.empty());
         return frontEndClient.exchange(
                 builder.toUriString(),
                 HttpMethod.GET,
@@ -175,7 +175,7 @@ public class ReviewClient implements ReviewController {
             List<String> searchTerms, Optional<LocalDate> startDate, Optional<LocalDate> endDate) {
         final String url = host + BASE_URL + GET_SEARCH;
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url);
-        setupSearchParam(builder, fullText, searchTerms, startDate, endDate);
+        setupSearchParam(builder, fullText, searchTerms, startDate, endDate, Optional.empty(), Optional.empty());
         return frontEndClient.exchange(
                 builder.toUriString(),
                 HttpMethod.GET,
@@ -184,13 +184,16 @@ public class ReviewClient implements ReviewController {
     }
 
     private void setupSearchParam(UriComponentsBuilder builder, Optional<String> fullText,
-        List<String> searchTerms, Optional<LocalDate> startDate, Optional<LocalDate> endDate) {
+        List<String> searchTerms, Optional<LocalDate> startDate, Optional<LocalDate> endDate,
+            Optional<String> author, Optional<String> crim) {
         fullText.ifPresent(str -> builder.queryParam("t", str));
         if (!searchTerms.isEmpty()) {
             builder.queryParam("in", searchTerms);
         }
         startDate.ifPresent(d -> builder.queryParam("startDate", startDate));
         endDate.ifPresent(d -> builder.queryParam("endDate", endDate));
+        author.ifPresent(a -> builder.queryParam("a", a));
+        crim.ifPresent(c -> builder.queryParam("c", c));
     }
 
     private UriComponentsBuilder builderWithPageParam(String url, int page, int size, String sortBy, String dir) {
